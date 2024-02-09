@@ -34,7 +34,6 @@ public class GameScreen extends ScreenAdapter {
         this.camera = camera;
         this.batch = new SpriteBatch();
         this.world = new World(new Vector2(0, -25f), false);
-        this.debugRenderer = new Box2DDebugRenderer();
         this.tileMapHelper = new TileMapHelper(this);
         this.renderer = tileMapHelper.setupMap();
 
@@ -71,11 +70,11 @@ public class GameScreen extends ScreenAdapter {
 
         renderer.render();
         batch.begin();
+        player.render(batch);
         //render di tutti gli oggetti
 
 
         batch.end();
-        debugRenderer.render(world, camera.combined.scl(PPM));
     }
 
     public World getWorld() {
