@@ -63,12 +63,15 @@ public class TileMapHelper {
     private void parseTileCollisions() {
         for (MapLayer layer : map.getLayers()) {
             if (layer instanceof TiledMapTileLayer) {
-                TiledMapTileLayer tileLayer = (TiledMapTileLayer) layer;
-                for (int y = 0; y < tileLayer.getHeight(); y++) {
-                    for (int x = 0; x < tileLayer.getWidth(); x++) {
-                        TiledMapTileLayer.Cell cell = tileLayer.getCell(x, y);
-                        if (cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey("collidable")) {
-                            createStaticBodyForTile(x, y, tileLayer.getTileWidth(), tileLayer.getTileHeight());
+                System.out.println(layer.getProperties().containsKey("collides"));
+                if(layer.getProperties().containsKey("collides")) {
+                    TiledMapTileLayer tileLayer = (TiledMapTileLayer) layer;
+                    for (int y = 0; y < tileLayer.getHeight(); y++) {
+                        for (int x = 0; x < tileLayer.getWidth(); x++) {
+                            TiledMapTileLayer.Cell cell = tileLayer.getCell(x, y);
+                            if (cell != null && cell.getTile() != null) {
+                                createStaticBodyForTile(x, y, tileLayer.getTileWidth(), tileLayer.getTileHeight());
+                            }
                         }
                     }
                 }

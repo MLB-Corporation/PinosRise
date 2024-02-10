@@ -20,7 +20,7 @@ public class GameClass extends Game {
         this.widthScreen = Gdx.graphics.getWidth();
         this.heightScreen = Gdx.graphics.getHeight();
         this.camera = new OrthographicCamera();
-        this.camera.setToOrtho(false, widthScreen/4, heightScreen/4);
+        this.camera.setToOrtho(false, widthScreen/3, heightScreen/3);
 
         setScreen(new GameScreen(camera));
     }
