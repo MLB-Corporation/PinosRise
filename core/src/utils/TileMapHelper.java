@@ -63,14 +63,47 @@ public class TileMapHelper {
     private void parseTileCollisions() {
         for (MapLayer layer : map.getLayers()) {
             if (layer instanceof TiledMapTileLayer) {
-                System.out.println(layer.getProperties().containsKey("collides"));
-                if(layer.getProperties().containsKey("collides")) {
+                if (layer.getProperties().containsKey("collides")) {
                     TiledMapTileLayer tileLayer = (TiledMapTileLayer) layer;
+
+                    // Handle horizontal chains
                     for (int y = 0; y < tileLayer.getHeight(); y++) {
-                        for (int x = 0; x < tileLayer.getWidth(); x++) {
-                            TiledMapTileLayer.Cell cell = tileLayer.getCell(x, y);
+                        int counter = 0;
+                        int startX = -1; // Initialize start X position outside valid range
+                        for (int x = 0; x <= tileLayer.getWidth(); x++) {
+                            TiledMapTileLayer.Cell cell = x < tileLayer.getWidth() ? tileLayer.getCell(x, y) : null;
                             if (cell != null && cell.getTile() != null) {
-                                createStaticBodyForTile(x, y, tileLayer.getTileWidth(), tileLayer.getTileHeight());
+                                if (startX == -1) {
+                                    startX = x; // Set start X position at the beginning of a new tile chain
+                                }
+                                counter++;
+                            } else if (counter > 0) {
+                                float width = counter * tileLayer.getTileWidth();
+                                float startXPosition = startX * tileLayer.getTileWidth();
+                                createStaticBodyForTile(startXPosition, y, width, tileLayer.getTileHeight(), true);
+                                counter = 0;
+                                startX = -1; // Reset start X for the next chain
+                            }
+                        }
+                    }
+
+                    // Handle vertical chains
+                    for (int x = 0; x < tileLayer.getWidth(); x++) {
+                        int counter = 0;
+                        int startY = -1; // Initialize start Y position outside valid range
+                        for (int y = 0; y <= tileLayer.getHeight(); y++) {
+                            TiledMapTileLayer.Cell cell = y < tileLayer.getHeight() ? tileLayer.getCell(x, y) : null;
+                            if (cell != null && cell.getTile() != null) {
+                                if (startY == -1) {
+                                    startY = y; // Set start Y position at the beginning of a new tile chain
+                                }
+                                counter++;
+                            } else if (counter > 0) {
+                                float height = counter * tileLayer.getTileHeight();
+                                float startYPosition = startY * tileLayer.getTileHeight();
+                                createStaticBodyForTile(x, startYPosition, tileLayer.getTileWidth(), height, false);
+                                counter = 0;
+                                startY = -1; // Reset start Y for the next chain
                             }
                         }
                     }
@@ -79,19 +112,36 @@ public class TileMapHelper {
         }
     }
 
-    private void createStaticBodyForTile(float x, float y, float width, float height) {
-        // Modifica questa funzione per adattarla al tuo modo di creare corpi fisici.
-        // Ad esempio, potresti voler calcolare la posizione del centro del tile e usare quelle coordinate per posizionare il corpo fisico.
+
+
+
+    private void createStaticBodyForTile(float startPosition, float orthogonalPosition, float length, float thickness, boolean isHorizontal) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set((x * width + width / 2) / PPM, (y * height + height / 2) / PPM);
+
+        // Calculate position based on orientation
+        float posX, posY;
+        if (isHorizontal) {
+            posX = (startPosition + length / 2) / PPM;
+            posY = (orthogonalPosition * thickness + thickness / 2) / PPM;
+        } else {
+            posX = (orthogonalPosition * thickness + thickness / 2) / PPM;
+            posY = (startPosition + length / 2) / PPM;
+        }
+        bodyDef.position.set(posX, posY);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width / 2 / PPM, height / 2 / PPM);
+        // Set shape based on orientation
+        if (isHorizontal) {
+            shape.setAsBox(length / 2 / PPM, thickness / 2 / PPM);
+        } else {
+            shape.setAsBox(thickness / 2 / PPM, length / 2 / PPM);
+        }
 
         gameScreen.getWorld().createBody(bodyDef).createFixture(shape, 0);
         shape.dispose();
     }
+
 
     private void createStaticBody(PolygonMapObject polygonMapObject){
         BodyDef bodyDef = new BodyDef();

@@ -36,6 +36,7 @@ public class GameScreen extends ScreenAdapter {
         this.world = new World(new Vector2(0, -25f), false);
         this.tileMapHelper = new TileMapHelper(this);
         this.renderer = tileMapHelper.setupMap();
+        this.debugRenderer = new Box2DDebugRenderer();
 
     }
 
@@ -75,6 +76,7 @@ public class GameScreen extends ScreenAdapter {
 
 
         batch.end();
+        debugRenderer.render(world, camera.combined.scl(PPM));
     }
 
     public World getWorld() {

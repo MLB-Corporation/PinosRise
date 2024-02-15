@@ -41,6 +41,9 @@
             "scaleInDock": 1,
             "scaleInEditor": 16
         },
+        "finn2.tsx": {
+            "scaleInDock": 1
+        },
         "liane.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
@@ -53,11 +56,11 @@
             "expandedGroupLayers": [
                 4
             ],
-            "scale": 4,
-            "selectedLayer": 6,
+            "scale": 8,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 1199.875,
-                "y": 2395.875
+                "x": 942.875,
+                "y": 3084.125
             }
         },
         "mappa2.tmx": {
@@ -104,10 +107,9 @@
     ],
     "project": "giocoGiava.tiled-project",
     "recentFiles": [
-        "finn.tsx",
-        "catenevolandiecc.tsx",
         "esterni.tsx",
         "Dungeon.tsx",
+        "catenevolandiecc.tsx",
         "tiles.tsx",
         "tile test.tsx",
         "mappa2.tmx",
@@ -115,6 +117,7 @@
         "liane.tsx",
         "tubi.tsx",
         "mappa.tmx",
+        "finn.tsx",
         "C:/Users/4binfo/AppData/Local/Temp/e29573fc-97c3-4ce1-ab08-443f383739df_adve.zip.9df/adve/map.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",

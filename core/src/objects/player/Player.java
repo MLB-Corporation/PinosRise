@@ -35,7 +35,7 @@ public class Player extends GameEntity{
         y = body.getPosition().y * PPM;
 
         checkUserInput();
-        sprite.setPosition(x-10, y-10);
+        sprite.setPosition(x-6, y-8);
     }
 
     @Override
