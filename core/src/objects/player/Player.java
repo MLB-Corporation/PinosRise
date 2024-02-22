@@ -17,6 +17,18 @@ import static utils.Constants.PPM;
 
 public class Player extends GameEntity {
 
+    private boolean isOnGround = true;
+
+    // This method should be called when a collision with the ground is detected
+    public void hitGround() {
+        isOnGround = true;
+    }
+
+    // This method should be called when the player leaves the ground
+    public void leaveGround() {
+        isOnGround = false;
+    }
+
     private int jumpCount;
     private Sprite sprite;
     private TiledMap tiledMap; // Reference to the TiledMap
@@ -59,16 +71,18 @@ public class Player extends GameEntity {
 
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y);
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && jumpCount < 2 || Gdx.input.isKeyJustPressed(Input.Keys.W) && jumpCount < 2 || Gdx.input.isKeyJustPressed(Input.Keys.UP) && jumpCount < 2){
+        // ...
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isOnGround){
+            jumpCount = 1;
             float force = body.getMass()*10;
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
             body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
             jumpCount++;
+            isOnGround = false; // The player is no longer on the ground after jumping
         }
-
-        if(body.getLinearVelocity().y == 0) {
-            jumpCount = 0;
-        }
+        //if linear velocity is 0 and player is on the ground, reset jump count
+         if(body.getLinearVelocity().y == 0){
+            jumpCount = 0;}
 
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y < 7 ? body.getLinearVelocity().y : 7);
 

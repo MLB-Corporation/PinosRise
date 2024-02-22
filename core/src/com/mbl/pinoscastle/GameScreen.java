@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import objects.player.Player;
+import utils.PlayerContactListener;
 import utils.TileMapHelper;
 
 import static utils.Constants.PPM;
@@ -37,6 +38,7 @@ public class GameScreen extends ScreenAdapter {
         this.tileMapHelper = new TileMapHelper(this);
         this.renderer = tileMapHelper.setupMap();
         this.debugRenderer = new Box2DDebugRenderer();
+        world.setContactListener(new PlayerContactListener(player));
 
     }
 
