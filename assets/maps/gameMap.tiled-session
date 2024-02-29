@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "C:/Users/Pietro/Downloads/pinoscastle-20240208T144029Z-001/pinoscastle/assets/maps/esterni.tsx",
+    "activeFile": "mappa2.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -47,6 +47,9 @@
         "esterni.tsx": {
             "scaleInDock": 1
         },
+        "finn2.tsx": {
+            "scaleInDock": 1
+        },
         "liane.tsx": {
             "scaleInDock": 1
         },
@@ -57,8 +60,8 @@
             "scale": 4,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1199.75,
-                "y": 2395.5
+                "x": 1199.625,
+                "y": 2395.625
             }
         },
         "mappa2.tmx": {
@@ -68,8 +71,8 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 958.6666666666666,
-                "y": 638.6666666666665
+                "x": 956.6666666666666,
+                "y": 636.6666666666666
             }
         },
         "tile test.tsx": {
@@ -90,11 +93,7 @@
     "openFiles": [
         "mappa.tmx",
         "tile test.tsx",
-        "mappa2.tmx",
-        "C:/Users/Pietro/Downloads/pinoscastle-20240208T144029Z-001/pinoscastle/assets/maps/mappa.tmx",
-        "C:/Users/Pietro/Downloads/pinoscastle-20240208T144029Z-001/pinoscastle/assets/maps/catenevolandiecc.tsx",
-        "C:/Users/Pietro/Downloads/pinoscastle-20240208T144029Z-001/pinoscastle/assets/maps/Dungeon.tsx",
-        "C:/Users/Pietro/Downloads/pinoscastle-20240208T144029Z-001/pinoscastle/assets/maps/esterni.tsx"
+        "mappa2.tmx"
     ],
     "project": "gameMap.tiled-project",
     "recentFiles": [

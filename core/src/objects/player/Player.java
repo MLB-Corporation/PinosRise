@@ -1,5 +1,6 @@
 package objects.player;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,10 +13,13 @@ import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
+import utils.BlackScreen;
+import utils.Timer;
 
 import static utils.Constants.PPM;
 
 public class Player extends GameEntity {
+
 
     private boolean isOnGround = true;
 
@@ -61,34 +65,77 @@ public class Player extends GameEntity {
     }
 
 
+    private float jumpTimer = 0; // Add this line at the beginning of your class
+
     private void checkUserInput() {
         velX = 0;
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
-            velX = 1;
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
+                velX = (float)1.5;
+            else
+                velX = 1;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))
-            velX = -1;
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
+                velX = (float)-1.5;
+            else
+                velX = -1;
 
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y);
 
-        // ...
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && isOnGround){
+        // Update the jump timer
+        jumpTimer += Gdx.graphics.getDeltaTime();
+
+        // Check if the space key is pressed, the player is on the ground, and at least 1 second has passed since the last jump
+        if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && isOnGround && jumpTimer >= 0.5){
             jumpCount = 1;
             float force = body.getMass()*10;
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
             body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
             jumpCount++;
             isOnGround = false; // The player is no longer on the ground after jumping
+
+            // Reset the jump timer
+            jumpTimer = 0;
         }
         //if linear velocity is 0 and player is on the ground, reset jump count
-         if(body.getLinearVelocity().y == 0){
-            jumpCount = 0;}
+        if(body.getLinearVelocity().y == 0){
+            jumpCount = 0;
+        }
 
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y < 7 ? body.getLinearVelocity().y : 7);
-
     }
-
+    public boolean isJumping() {
+        return !isOnGround && body.getLinearVelocity().y > 0;
+    }
     private void checkTeleport() {
+        Vector2 playerPosition1 = new Vector2(body.getPosition().x, body.getPosition().y);
+        MapObjects objects1 = tiledMap.getLayers().get("Objects").getObjects(); // Access objects from the "Objects" layer
+
+        // Create a copy of objects for the second loop
+        MapObjects objectsCopy1 = new MapObjects();
+        for (MapObject object : objects1) {
+            objectsCopy1.add(object);
+        }
+
+        for (MapObject object : objects1) {
+            if (object instanceof RectangleMapObject) {
+                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                String objectName = object.getName();
+                if (rect.contains(playerPosition1.x * PPM, body.getPosition().y * PPM)) {
+                    // Check if the current object is named "pipe_1C" or "pipe_1D"
+                    if (objectName.endsWith("C")) {
+                        //slow down the player
+
+                        teleportToDestination(objectsCopy1, objectName.replace("C", "D"));
+                    } else if (objectName.endsWith("D")) {
+                        teleportToDestination(objectsCopy1, objectName.replace("D", "C"));
+                    }
+                }
+            }
+        }
+
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             Vector2 playerPosition = new Vector2(body.getPosition().x, body.getPosition().y);
             MapObjects objects = tiledMap.getLayers().get("Objects").getObjects(); // Access objects from the "Objects" layer

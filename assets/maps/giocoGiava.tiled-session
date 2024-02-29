@@ -56,19 +56,19 @@
             "expandedGroupLayers": [
                 4
             ],
-            "scale": 1.5,
-            "selectedLayer": 8,
+            "scale": 3,
+            "selectedLayer": 12,
             "viewCenter": {
-                "x": 1375.3333333333335,
-                "y": 3765.333333333333
+                "x": 1199.8333333333333,
+                "y": 2395.6666666666665
             }
         },
         "mappa2.tmx": {
             "scale": 0.79265625,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 920.3232801103884,
-                "y": 638.9907352651292
+                "x": 959.4322885866352,
+                "y": 639.6215257244235
             }
         },
         "tile test.tsx": {

@@ -15,6 +15,8 @@ import objects.player.Player;
 import utils.PlayerContactListener;
 import utils.TileMapHelper;
 
+import java.util.Timer;
+
 import static utils.Constants.PPM;
 
 public class GameScreen extends ScreenAdapter {
@@ -58,8 +60,14 @@ public class GameScreen extends ScreenAdapter {
     private void cameraUpdate() {
         Vector3 position = camera.position;
         position.x = Math.round(player.getBody().getPosition().x * PPM * 10)/10f;
+
+
         position.y = Math.round(player.getBody().getPosition().y * PPM * 10)/10f;
+
         camera.position.set(position);
+
+        camera.viewportWidth = 500;
+        camera.viewportHeight = 500 * (Gdx.graphics.getHeight() / (float)Gdx.graphics.getWidth());
         camera.update();
     }
 
