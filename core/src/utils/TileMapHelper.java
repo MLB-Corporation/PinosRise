@@ -11,10 +11,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.physics.box2d.*;
 import com.mbl.pinoscastle.GameScreen;
 import objects.player.Player;
 
@@ -54,17 +51,22 @@ public class TileMapHelper {
                             false,
                             gameScreen.getWorld()
                     );
-                    gameScreen.setPlayer(new Player(rectangle.getWidth(), rectangle.getHeight(), body, map));
+                    gameScreen.setPlayer(new Player(rectangle.getWidth(), rectangle.getHeight(), body, map, gameScreen));
                 }
             }
         }
     }
 
-    private void parseTileCollisions() {
+
+
+
+
+private void parseTileCollisions() {
         for (MapLayer layer : map.getLayers()) {
             if (layer instanceof TiledMapTileLayer) {
                 if (layer.getProperties().containsKey("collides")) {
                     TiledMapTileLayer tileLayer = (TiledMapTileLayer) layer;
+                    boolean isOneWayLayer = layer.getName().equalsIgnoreCase("OneWay");
 
                     // Handle horizontal chains
                     for (int y = 0; y < tileLayer.getHeight(); y++) {
@@ -80,33 +82,13 @@ public class TileMapHelper {
                             } else if (counter > 0) {
                                 float width = counter * tileLayer.getTileWidth();
                                 float startXPosition = startX * tileLayer.getTileWidth();
-                                createStaticBodyForTile(startXPosition, y, width, tileLayer.getTileHeight(), true);
+                                createStaticBodyForTile(startXPosition, y, width, tileLayer.getTileHeight(), true, isOneWayLayer);
                                 counter = 0;
                                 startX = -1; // Reset start X for the next chain
                             }
                         }
                     }
 
-                    // Handle vertical chains
-                    for (int x = 0; x < tileLayer.getWidth(); x++) {
-                        int counter = 0;
-                        int startY = -1; // Initialize start Y position outside valid range
-                        for (int y = 0; y <= tileLayer.getHeight(); y++) {
-                            TiledMapTileLayer.Cell cell = y < tileLayer.getHeight() ? tileLayer.getCell(x, y) : null;
-                            if (cell != null && cell.getTile() != null) {
-                                if (startY == -1) {
-                                    startY = y; // Set start Y position at the beginning of a new tile chain
-                                }
-                                counter++;
-                            } else if (counter > 0) {
-                                float height = counter * tileLayer.getTileHeight();
-                                float startYPosition = startY * tileLayer.getTileHeight();
-                                createStaticBodyForTile(x, startYPosition, tileLayer.getTileWidth(), height, false);
-                                counter = 0;
-                                startY = -1; // Reset start Y for the next chain
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -115,7 +97,8 @@ public class TileMapHelper {
 
 
 
-    private void createStaticBodyForTile(float startPosition, float orthogonalPosition, float length, float thickness, boolean isHorizontal) {
+
+    private void createStaticBodyForTile(float startPosition, float orthogonalPosition, float length, float thickness, boolean isHorizontal, boolean isOneWay) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
 
@@ -138,7 +121,12 @@ public class TileMapHelper {
             shape.setAsBox(thickness / 2 / PPM, length / 2 / PPM);
         }
 
-        gameScreen.getWorld().createBody(bodyDef).createFixture(shape, 0);
+        Fixture fixture = gameScreen.getWorld().createBody(bodyDef).createFixture(shape, 0);
+        if (isOneWay) {
+            fixture.setUserData("oneWay"); // Mark this fixture for special collision handling.
+        } else {
+            fixture.setUserData("normal");
+        }
         shape.dispose();
     }
 
@@ -148,7 +136,7 @@ public class TileMapHelper {
         bodyDef.type = BodyDef.BodyType.StaticBody;
         Body body = gameScreen.getWorld().createBody(bodyDef);
         Shape shape = createPolygonShape(polygonMapObject);
-        body.createFixture(shape, 1000);
+        body.createFixture(shape, 1000).setUserData("player");
         shape.dispose();
     }
 

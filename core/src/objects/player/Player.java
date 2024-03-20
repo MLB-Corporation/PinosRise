@@ -13,9 +13,12 @@ import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.QueryCallback;
+import com.badlogic.gdx.utils.Array;
+import com.mbl.pinoscastle.GameScreen;
 import utils.BlackScreen;
-import utils.Timer;
-
+import com.badlogic.gdx.utils.Timer;
 import static utils.Constants.PPM;
 
 public class Player extends GameEntity {
@@ -33,16 +36,18 @@ public class Player extends GameEntity {
         isOnGround = false;
     }
 
+    private GameScreen gameScreen;
+
     private int jumpCount;
     private Sprite sprite;
     private TiledMap tiledMap; // Reference to the TiledMap
 
-    public Player(float width, float height, Body body, TiledMap tiledMap) {
+    public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen) {
         super(width, height, body);
         this.speed = 2.5f;
         this.jumpCount = 0;
         this.tiledMap = tiledMap; // Initialize the TiledMap
-
+        this.gameScreen = gameScreen;
         Texture texture = new Texture(Gdx.files.internal("player/player.png"));
         this.sprite = new Sprite(texture);
         this.sprite.setSize(width / PPM, height / PPM);
@@ -97,6 +102,40 @@ public class Player extends GameEntity {
 
             // Reset the jump timer
             jumpTimer = 0;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            // Get the player's position
+            Vector2 playerPosition = body.getPosition();
+
+            // Get the fixtures under the player
+            Array<Fixture> fixtures = new Array<>();
+            gameScreen.getWorld().QueryAABB(new QueryCallback() {
+                @Override
+                public boolean reportFixture(Fixture fixture) {
+                    fixtures.add(fixture);
+                    return true;
+                }
+            }, playerPosition.x, playerPosition.y - 1, playerPosition.x, playerPosition.y);
+
+            // Check if any of the fixtures are "oneWay" tiles
+            for (Fixture fixture : fixtures) {
+                if (fixture.getUserData() != null && fixture.getUserData().equals("oneWay")) {
+                    // Disable the tile's hitbox
+                    fixture.setSensor(true);
+
+                    // Use a Timer to re-enable the hitbox after a delay
+                    Timer.schedule(new Timer.Task() {
+                        @Override
+                        public void run() {
+                            fixture.setSensor(false);
+                        }
+                    }, 0.3f);  // Delay in seconds
+
+                    // Exit the loop after finding a "oneWay" tile
+                    break;
+                }
+            }
         }
         //if linear velocity is 0 and player is on the ground, reset jump count
         if(body.getLinearVelocity().y == 0){

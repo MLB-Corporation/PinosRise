@@ -13,6 +13,8 @@ public class GameClass extends Game {
 
     public GameClass(int widthScreen, int heightScreen) {
         INSTANCE = this;
+        this.widthScreen = widthScreen;
+        this.heightScreen = heightScreen;
     }
 
     @Override
