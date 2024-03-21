@@ -17,10 +17,16 @@ public class PlayerContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
+        System.out.println("Contact detected");
+        System.out.println("Fixture A: " + fixtureA.getUserData());
+        System.out.println("Fixture B: " + fixtureB.getUserData());
+
         // Check for player hitting or leaving the ground
         if (fixtureA.getBody() == player.getBody() || fixtureB.getBody() == player.getBody()) {
             player.hitGround();
         }
+
+
     }
 
     @Override
@@ -31,6 +37,13 @@ public class PlayerContactListener implements ContactListener {
         // Check for player leaving the ground
         if (fixtureA.getBody() == player.getBody() || fixtureB.getBody() == player.getBody()) {
             player.leaveGround();
+        }
+
+        // Check for player ending contact with a sliding platform
+        if ((fixtureA.getBody() == player.getBody() && "sliding".equals(fixtureB.getUserData())) ||
+                (fixtureB.getBody() == player.getBody() && "sliding".equals(fixtureA.getUserData()))) {
+            // Stop applying the sliding force to the player's body
+            player.getBody().setLinearVelocity(0, player.getBody().getLinearVelocity().y);
         }
     }
 
@@ -52,6 +65,13 @@ public class PlayerContactListener implements ContactListener {
                 contact.setEnabled(false);
             }
 
+        if ("slide".equals(fixtureA.getUserData()) || "slide".equals(fixtureB.getUserData())) {
+            System.out.println("Player is on a sliding platform");
+
+            // Set the player's linear velocity to a constant value in the right direction
+            player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x + 1, player.getBody().getLinearVelocity().y);
+        }
+
     }
 
 
@@ -69,4 +89,6 @@ public class PlayerContactListener implements ContactListener {
 
         return (aIsOneWay && bIsPlayer) || (bIsOneWay && aIsPlayer);
     }
+
+
 }

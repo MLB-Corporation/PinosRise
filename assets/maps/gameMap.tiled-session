@@ -60,8 +60,8 @@
             "scale": 4,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1199.75,
-                "y": 2395.5
+                "x": 1199.625,
+                "y": 2395.625
             }
         },
         "mappa2.tmx": {
@@ -71,8 +71,8 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 955.9999999999999,
-                "y": 636
+                "x": 954,
+                "y": 634
             }
         },
         "tile test.tsx": {
