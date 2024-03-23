@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mbl.pinoscastle.GameScreen;
+import objects.obstacles.MovingPlatform;
 import objects.player.Player;
 
 import static utils.Constants.PPM;
@@ -41,8 +42,16 @@ public class TileMapHelper {
 
             if(mapObject instanceof RectangleMapObject) {
                 Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+
                 String rectangleName = mapObject.getName();
+                if(mapObject.getProperties().containsKey("moving")) {
+                    gameScreen.addMovingPlatform(new MovingPlatform(gameScreen.getWorld(), (RectangleMapObject) mapObject));
+                    System.out.println("Altezza plat: " + rectangle.height);
+                }
                 if(rectangleName.equals("player")) {
+                    System.out.println("Altezza player: " + rectangle.height);
+                    PolygonShape shape = new PolygonShape();
+                    shape.setAsBox(rectangle.getWidth()/2/PPM, rectangle.getHeight()/2/PPM);
                     Body body = BodyHelperService.createBody(
                             rectangle.getX() + rectangle.getY() /2,
                             rectangle.getY() + rectangle.getHeight() /2,
@@ -51,6 +60,7 @@ public class TileMapHelper {
                             false,
                             gameScreen.getWorld()
                     );
+                    body.createFixture(shape, 1000).setUserData("player");
                     gameScreen.setPlayer(new Player(rectangle.getWidth(), rectangle.getHeight(), body, map, gameScreen));
                 }
             }
@@ -66,6 +76,7 @@ private void parseTileCollisions() {
             if (layer instanceof TiledMapTileLayer) {
                 if (layer.getProperties().containsKey("collides")) {
                     TiledMapTileLayer tileLayer = (TiledMapTileLayer) layer;
+
                     boolean isOneWayLayer = layer.getName().equalsIgnoreCase("OneWay");
                     boolean isSlideLayer = layer.getName().equalsIgnoreCase("slide");
 

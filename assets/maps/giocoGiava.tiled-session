@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "finn2.tsx",
+    "activeFile": "mappa.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -57,19 +57,19 @@
             "expandedGroupLayers": [
                 4
             ],
-            "scale": 3,
-            "selectedLayer": 12,
+            "scale": 5.5,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 1199.8333333333333,
-                "y": 2395.833333333333
+                "x": 518.5454545454545,
+                "y": 1823.090909090909
             }
         },
         "mappa2.tmx": {
             "scale": 0.79265625,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 956.909126749458,
-                "y": 654.1297062881924
+                "x": 1759.905381431106,
+                "y": 1010.5263157894738
             }
         },
         "tile test.tsx": {
@@ -105,7 +105,8 @@
         "Dungeon.tsx",
         "esterni.tsx",
         "finn.tsx",
-        "finn2.tsx"
+        "finn2.tsx",
+        "mappa.tmx"
     ],
     "project": "giocoGiava.tiled-project",
     "recentFiles": [
