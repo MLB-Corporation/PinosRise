@@ -1,11 +1,8 @@
 package utils;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.WeldJoint;
-import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
-import com.mbl.pinoscastle.GameClass;
-import com.mbl.pinoscastle.GameScreen;
+import com.mbl.pinoscastle.screens.GameScreen;
 import objects.player.Player;
 
 public class PlayerContactListener implements ContactListener {

@@ -12,7 +12,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.mbl.pinoscastle.GameScreen;
+import com.mbl.pinoscastle.screens.GameScreen;
 import objects.obstacles.MovingPlatform;
 import objects.player.Player;
 
@@ -61,7 +61,7 @@ public class TileMapHelper {
                             gameScreen.getWorld()
                     );
                     body.createFixture(shape, 1000).setUserData("player");
-                    gameScreen.setPlayer(new Player(rectangle.getWidth(), rectangle.getHeight(), body, map, gameScreen));
+                    gameScreen.setPlayer(new Player(rectangle.getWidth(), rectangle.getHeight(), body, map, gameScreen, (RectangleMapObject) mapObject));
                 }
             }
         }

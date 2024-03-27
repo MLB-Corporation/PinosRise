@@ -1,6 +1,5 @@
 package objects.player;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,8 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.utils.Array;
-import com.mbl.pinoscastle.GameScreen;
-import utils.BlackScreen;
+import com.mbl.pinoscastle.screens.GameScreen;
 import com.badlogic.gdx.utils.Timer;
 import static utils.Constants.PPM;
 
@@ -38,17 +36,22 @@ public class Player extends GameEntity {
 
     private GameScreen gameScreen;
 
+    private Texture texture;
+
+    private Rectangle rect;
+
     private int jumpCount;
     private Sprite sprite;
     private TiledMap tiledMap; // Reference to the TiledMap
 
-    public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen) {
+    public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen, RectangleMapObject mapObject) {
         super(width, height, body);
         this.speed = 2.5f;
         this.jumpCount = 0;
+        this.rect = mapObject.getRectangle();
         this.tiledMap = tiledMap; // Initialize the TiledMap
         this.gameScreen = gameScreen;
-        Texture texture = new Texture(Gdx.files.internal("player/player.png"));
+        this.texture = new Texture(Gdx.files.internal("player/player.png"));
         this.sprite = new Sprite(texture);
         this.sprite.setSize(width / PPM, height / PPM);
         this.sprite.setOrigin(width / (2 * PPM), height / (2 * PPM));
@@ -66,6 +69,11 @@ public class Player extends GameEntity {
 
     @Override
     public void render(SpriteBatch batch) {
+
+        float widthInPixels = rect.width;
+        float heightInPixels = rect.height;
+        Sprite sprite = new Sprite(texture);
+        sprite.setPosition(body.getPosition().x*PPM-widthInPixels/2, body.getPosition().y*PPM-heightInPixels/2);
         sprite.draw(batch);
     }
 
@@ -214,6 +222,11 @@ public class Player extends GameEntity {
             }
         }
     }
+
+    public void dispose() {
+        texture.dispose();
+    }
+
 
 
 

@@ -1,0 +1,106 @@
+package com.mbl.pinoscastle.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.mbl.pinoscastle.GameClass;
+
+public class PreferencesScreen implements Screen {
+
+    private GameClass parent;
+
+    private static final String PREF_MUSIC_VOLUME = "volume";
+    private static final String PREF_MUSIC_ENABLED = "music.enabled";
+    private static final String PREF_SOUND_ENABLED = "sound.enabled";
+    private static final String PREF_SOUND_VOL = "sound";
+    private static final String PREFS_NAME = "preferences";
+
+    Skin skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
+
+    public PreferencesScreen(GameClass parent) {
+        this.parent = parent;
+
+    }
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void render(float v) {
+
+    }
+    protected Preferences getPrefs() {
+        return Gdx.app.getPreferences(PREFS_NAME);
+    }
+
+    public boolean isSoundEffectsEnabled() {
+        return getPrefs().getBoolean(PREF_SOUND_ENABLED, true);
+    }
+
+    public void setSoundEffectsEnabled(boolean soundEffectsEnabled) {
+        getPrefs().putBoolean(PREF_SOUND_ENABLED, soundEffectsEnabled);
+        getPrefs().flush();
+    }
+
+    public boolean isMusicEnabled() {
+        return getPrefs().getBoolean(PREF_MUSIC_ENABLED, true);
+    }
+
+    public void setMusicEnabled(boolean musicEnabled) {
+        getPrefs().putBoolean(PREF_MUSIC_ENABLED, musicEnabled);
+        getPrefs().flush();
+    }
+
+    public float getMusicVolume() {
+        return getPrefs().getFloat(PREF_MUSIC_VOLUME, 0.5f);
+    }
+
+    public void setMusicVolume(float volume) {
+        getPrefs().putFloat(PREF_MUSIC_VOLUME, volume);
+        getPrefs().flush();
+    }
+
+    public float getSoundVolume() {
+        return getPrefs().getFloat(PREF_SOUND_VOL, 0.5f);
+    }
+
+    public void setSoundVolume(float volume) {
+        getPrefs().putFloat(PREF_SOUND_VOL, volume);
+        getPrefs().flush();
+    }
+
+
+    @Override
+    public void resize(int i, int i1) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+
+
+
+}

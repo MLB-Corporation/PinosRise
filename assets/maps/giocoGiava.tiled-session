@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "mappa.tmx",
+    "activeFile": "finn2.tsx",
     "expandedProjectPaths": [
         "."
     ],
@@ -60,8 +60,8 @@
             "scale": 5.5,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 518.5454545454545,
-                "y": 1823.090909090909
+                "x": 1199.818181818182,
+                "y": 2395.818181818182
             }
         },
         "mappa2.tmx": {
@@ -120,8 +120,8 @@
         "Dungeon.tsx",
         "esterni.tsx",
         "finn.tsx",
-        "finn2.tsx",
-        "mappa.tmx"
+        "mappa.tmx",
+        "finn2.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
