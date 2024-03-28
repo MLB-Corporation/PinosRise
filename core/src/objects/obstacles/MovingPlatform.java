@@ -22,13 +22,14 @@ public class MovingPlatform {
     private Texture texture;
     private float velocity = 2f; // Velocità della piattaforma
     private float moveTimer = 0;
-    private float directionChangeInterval = 2; // Intervallo di cambio direzione
+    private float directionChangeInterval; // Intervallo di cambio direzione
     private Rectangle rect;
 
-    public MovingPlatform(World world, RectangleMapObject mapObject) {
+    public MovingPlatform(World world, RectangleMapObject mapObject, String interval) {
         // Creazione della texture rossa
         this.texture = new Texture(Gdx.files.internal("structures/basicPlat.png"));
         this.rect = mapObject.getRectangle();
+        this.directionChangeInterval = Float.parseFloat(interval);
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.KinematicBody; // Piattaforme mobili devono essere Kinematic
@@ -37,7 +38,7 @@ public class MovingPlatform {
 
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(rect.width / 2 / PPM, rect.height / 2 / PPM);
-        body.createFixture(shape, 0.0f).setUserData("moving");
+        body.createFixture(shape, 0.0f).setUserData("moving, oneWay");
         shape.dispose();
 
         this.body.setLinearVelocity(velocity, 0); // Inizia a muoversi orizzontalmente

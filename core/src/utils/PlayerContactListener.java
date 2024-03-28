@@ -31,19 +31,17 @@ public class PlayerContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        if (fixtureA.getBody() == player.getBody() || fixtureB.getBody() == player.getBody()) {
-            player.hitGround();
+        if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
+            if (fixtureA.getBody() == player.getBody() || fixtureB.getBody() == player.getBody()) {
+                player.hitGround();
+            }
+
+            // Check for player beginning contact with a moving platform
+            if (fixtureA.getUserData().toString().contains("moving") || fixtureB.getUserData().toString().contains("moving")) {
+                // Store a reference to the platform's Body
+                platform = fixtureA.getUserData().toString().contains("moving") ? fixtureA.getBody() : fixtureB.getBody();
+            }
         }
-
-        // Check for player beginning contact with a moving platform
-        if ("moving".equals(fixtureA.getUserData()) || "moving".equals(fixtureB.getUserData())) {
-            // Store a reference to the platform's Body
-            platform = "moving".equals(fixtureA.getUserData()) ? fixtureA.getBody() : fixtureB.getBody();
-        }
-
-
-
-
 
 
     }
@@ -77,10 +75,11 @@ public class PlayerContactListener implements ContactListener {
 
 
         boolean isPlayerA = "player".equals(fixtureA.getUserData());
-        boolean isMovingPlatformB = "moving".equals(fixtureB.getUserData());
+        boolean isMovingPlatformB = fixtureB.getUserData().toString().contains("moving");
 
         Body playerBody = isPlayerA ? fixtureA.getBody() : fixtureB.getBody();
         Body platformBody = isMovingPlatformB ? fixtureB.getBody() : fixtureA.getBody();
+
 
 
         // Determine which fixture is the player and which is the platform
@@ -90,7 +89,7 @@ public class PlayerContactListener implements ContactListener {
 
 
 
-            if (player.getBody().getLinearVelocity().y > 0 && fixtureB.getUserData().equals("oneWay")) {
+            if (player.getBody().getLinearVelocity().y > 0 && fixtureB.getUserData().toString().contains("oneWay")) {
                 // Player is moving upwards; disable collision with the one-way platform
                 contact.setEnabled(false);
             }

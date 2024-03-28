@@ -45,7 +45,7 @@ public class TileMapHelper {
 
                 String rectangleName = mapObject.getName();
                 if(mapObject.getProperties().containsKey("moving")) {
-                    gameScreen.addMovingPlatform(new MovingPlatform(gameScreen.getWorld(), (RectangleMapObject) mapObject));
+                    gameScreen.addMovingPlatform(new MovingPlatform(gameScreen.getWorld(), (RectangleMapObject) mapObject, mapObject.getProperties().get("time").toString()));
                     System.out.println("Altezza plat: " + rectangle.height);
                 }
                 if(rectangleName.equals("player")) {

@@ -85,7 +85,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
 
-        if (contactListener.getPlatform() != null) {
+        if (contactListener.getPlatform() != null && contactListener.getPlatform().getPosition().y < player.getBody().getPosition().y) {
             Vector2 platformVelocity = contactListener.getPlatform().getLinearVelocity();
             // Add the platform's velocity to the player's current velocity
             Vector2 playerVelocity = player.getBody().getLinearVelocity();
