@@ -128,7 +128,7 @@ public class Player extends GameEntity {
 
             // Check if any of the fixtures are "oneWay" tiles
             for (Fixture fixture : fixtures) {
-                if (fixture.getUserData() != null && fixture.getUserData().equals("oneWay")) {
+                if (fixture.getUserData() != null && fixture.getUserData().toString().contains("oneWay")) {
                     // Disable the tile's hitbox
                     fixture.setSensor(true);
 
@@ -138,7 +138,7 @@ public class Player extends GameEntity {
                         public void run() {
                             fixture.setSensor(false);
                         }
-                    }, 0.3f);  // Delay in seconds
+                    }, 0.5f);  // Delay in seconds
 
                     // Exit the loop after finding a "oneWay" tile
                     break;
@@ -172,7 +172,6 @@ public class Player extends GameEntity {
                 if (rect.contains(playerPosition1.x * PPM, body.getPosition().y * PPM)) {
                     // Check if the current object is named "pipe_1C" or "pipe_1D"
                     if (objectName.endsWith("C")) {
-                        //slow down the player
 
                         teleportToDestination(objectsCopy1, objectName.replace("C", "D"));
                     } else if (objectName.endsWith("D")) {
