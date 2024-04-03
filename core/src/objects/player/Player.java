@@ -34,6 +34,10 @@ public class Player extends GameEntity {
         isOnGround = false;
     }
 
+    public boolean isOnGround() {
+        return this.isOnGround;
+    }
+
     private GameScreen gameScreen;
 
     private Texture texture;

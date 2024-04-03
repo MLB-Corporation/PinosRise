@@ -32,7 +32,8 @@ public class PlayerContactListener implements ContactListener {
         Fixture fixtureB = contact.getFixtureB();
 
         if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
-            if (fixtureA.getBody() == player.getBody() || fixtureB.getBody() == player.getBody()) {
+            boolean isNotVert = !fixtureB.getUserData().toString().equals("verticalWall");
+            if (fixtureA.getBody() == player.getBody() && isNotVert) {
                 player.hitGround();
             }
 
@@ -54,9 +55,15 @@ public class PlayerContactListener implements ContactListener {
     public void endContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
+        boolean isNotVert;
+        try {
+            isNotVert = !fixtureB.getUserData().toString().equals("verticalWall");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         // Check for player leaving the ground
-        if (fixtureA.getBody() == player.getBody() || fixtureB.getBody() == player.getBody()) {
+        if (fixtureA.getBody() == player.getBody() && isNotVert) {
             player.leaveGround();
         }
 

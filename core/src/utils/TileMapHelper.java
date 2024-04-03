@@ -79,6 +79,7 @@ private void parseTileCollisions() {
 
                     boolean isOneWayLayer = layer.getName().equalsIgnoreCase("OneWay");
                     boolean isSlideLayer = layer.getName().equalsIgnoreCase("slide");
+                    boolean isVerticalWall = layer.getName().equalsIgnoreCase("verWalls");
 
                     // Handle horizontal chains
                     for (int y = 0; y < tileLayer.getHeight(); y++) {
@@ -94,7 +95,8 @@ private void parseTileCollisions() {
                             } else if (counter > 0) {
                                 float width = counter * tileLayer.getTileWidth();
                                 float startXPosition = startX * tileLayer.getTileWidth();
-                                createStaticBodyForTile(startXPosition, y, width, tileLayer.getTileHeight(), true, isOneWayLayer, isSlideLayer);
+
+                                createStaticBodyForTile(startXPosition, y, width, tileLayer.getTileHeight(), true, isOneWayLayer, isSlideLayer, isVerticalWall);
                                 counter = 0;
                                 startX = -1; // Reset start X for the next chain
                             }
@@ -110,7 +112,7 @@ private void parseTileCollisions() {
 
 
 
-    private void createStaticBodyForTile(float startPosition, float orthogonalPosition, float length, float thickness, boolean isHorizontal, boolean isOneWay, boolean isSlide) {
+    private void createStaticBodyForTile(float startPosition, float orthogonalPosition, float length, float thickness, boolean isHorizontal, boolean isOneWay, boolean isSlide, boolean isVerticalWall) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
         if(isSlide) {
@@ -137,13 +139,16 @@ private void parseTileCollisions() {
         }
 
         Fixture fixture = gameScreen.getWorld().createBody(bodyDef).createFixture(shape, 0);
+        if(isVerticalWall) {
+            fixture.setUserData("verticalWall");
+        }
         if (isOneWay) {
             fixture.setUserData("oneWay"); // Mark this fixture for special collision handling.
         }
         if (isSlide) {
             fixture.setUserData("slide");
         }
-        if(!isSlide && !isOneWay){
+        if(!isSlide && !isOneWay && !isVerticalWall){
             fixture.setUserData("normal");
         }
         shape.dispose();
