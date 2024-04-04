@@ -34,7 +34,6 @@ public class PlayerContactListener implements ContactListener {
         if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
             boolean isNotVert = !fixtureB.getUserData().toString().equals("verticalWall");
             if ((fixtureA.getBody() == player.getBody() && isNotVert)) {
-                System.out.println("Player hit the ground");
                 player.hitGround();
             }
 

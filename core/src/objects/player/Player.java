@@ -189,6 +189,14 @@ public class Player extends GameEntity {
                         teleportToDestination(objectsCopy1, objectName.replace("C", "D"));
                     } else if (objectName.endsWith("D")) {
                         teleportToDestination(objectsCopy1, objectName.replace("D", "C"));
+                    } else if (objectName.equals("porta") && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                        // load the new map when the player press E on the object named "porta"
+                        TiledMap newMap = new TmxMapLoader().load("maps/livelloPrincipale.tmx");
+                        this.setPosition(new Vector2(0, 0)); // Imposta la posizione del giocatore
+                        tileMapHelper.resetMap(newMap);
+                        // Imposta la nuova mappa nella classe GameScreen
+                        gameScreen.setTiledMap(newMap);
+                        tileMapHelper.setupMap("maps/livelloPrincipale.tmx");
                     } else if (objectName.equals("zoom")) {
                         Timer.schedule(new Timer.Task() {
                             int counter = 0; // Contatore per tracciare il numero di secondi trascorsi
@@ -229,22 +237,6 @@ public class Player extends GameEntity {
 
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-
-            TiledMap newMap = new TmxMapLoader().load("maps/livelloPrincipale.tmx");
-
-            this.setPosition(new Vector2(0, 0)); // Imposta la posizione del giocatore
-            tileMapHelper.resetMap(newMap);
-            // Imposta la nuova mappa nella classe GameScreen
-            gameScreen.setTiledMap(newMap);
-            tileMapHelper.setupMap("maps/livelloPrincipale.tmx");
-
-
-
-
-
-
-
-
             Vector2 playerPosition = new Vector2(body.getPosition().x, body.getPosition().y);
             MapObjects objects = tiledMap.getLayers().get("Objects").getObjects(); // Access objects from the "Objects" layer
 
