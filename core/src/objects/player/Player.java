@@ -87,7 +87,7 @@ public class Player extends GameEntity {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
                 String objectName = object.getName();
                 if (rect.contains(playerPosition.x * PPM, body.getPosition().y * PPM)) {
-                    if (objectName.equals("scale")) {
+                    if (objectName.equals("ladder")) {
                         if(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
                             body.setLinearVelocity(body.getLinearVelocity().x, 1 * speed);
                         }
@@ -217,7 +217,7 @@ public class Player extends GameEntity {
                         gameScreen.setTiledMap(newMap);
                         tileMapHelper.setupMap("maps/livelloPrincipale.tmx");
                         // Spawn the player in front of the object "spawn"
-
+                        teleportToDestination(newMap.getLayers().get("Objects").getObjects(), "spawn");
 
                     } else if (objectName.equals("zoom")) {
                         Timer.schedule(new Timer.Task() {
