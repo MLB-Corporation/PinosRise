@@ -41,11 +41,13 @@ public class PlayerContactListener implements ContactListener {
         System.out.println(fixtureA.getBody().getPosition().toString()+ fixtureB);
 
         if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
+
             System.out.println(fixtureA.getUserData().toString() + " " + fixtureB.getUserData().toString());
             boolean isNotVert = !fixtureB.getUserData().toString().equals("verticalWall") && !fixtureA.getUserData().toString().equalsIgnoreCase("verticalWall");
             if ((isNotVert) && (fixtureA.getUserData().toString().equals("player") || fixtureB.getUserData().toString().equals("player"))) {
                 System.out.println("OAOOOOAOOA");
                 Player.hitGround();
+
             }
 
             // Check for player beginning contact with a moving platform
