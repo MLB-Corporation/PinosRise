@@ -1211,7 +1211,7 @@
  </layer>
  <objectgroup id="6" name="Objects">
   <object id="1" name="player" x="218.822" y="4761.34" width="12" height="17"/>
-  <object id="4" name="scale" x="336" y="4616" width="16" height="72"/>
+  <object id="4" name="ladder" x="336" y="4616" width="16" height="72"/>
   <object id="8" name="spawn" x="160" y="4752" width="8" height="32"/>
  </objectgroup>
  <layer id="4" name="walls" width="78" height="600">

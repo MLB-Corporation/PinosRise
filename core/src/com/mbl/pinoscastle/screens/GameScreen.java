@@ -66,6 +66,10 @@ public class GameScreen extends ScreenAdapter {
 
     }
 
+    public void setContactListener(PlayerContactListener contactListener) {
+        this.contactListener = contactListener;
+    }
+
     public void newPostAction(Runnable action) {
         postStepActions.add(action);
     }
