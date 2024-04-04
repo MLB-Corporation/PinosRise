@@ -38,8 +38,8 @@
             "scale": 0.75,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 168,
-                "y": 348
+                "x": 192,
+                "y": 66.66666666666663
             }
         },
         "C:/Users/Pietro/Downloads/maps/maps/Dungeon.tsx": {
@@ -99,6 +99,14 @@
             "scaleInDock": 3,
             "scaleInEditor": 1
         },
+        "livelloPrincipale.tmx": {
+            "scale": 3,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 271,
+                "y": 4709
+            }
+        },
         "mappa.tmx": {
             "expandedGroupLayers": [
                 4
@@ -107,18 +115,18 @@
                 15
             ],
             "scale": 0.5,
-            "selectedLayer": 12,
+            "selectedLayer": 13,
             "viewCenter": {
-                "x": 1200,
-                "y": 2395
+                "x": 114,
+                "y": 4294
             }
         },
         "mappa2.tmx": {
             "scale": 0.79265625,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 957.5399172087523,
-                "y": 638.3599448058349
+                "x": 958.8014981273409,
+                "y": 639.6215257244235
             }
         },
         "newMap.tmx": {
@@ -128,8 +136,8 @@
             "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 184.848484848485,
-                "y": 890.9090909090908
+                "x": 178.78787878787898,
+                "y": 884.8484848484849
             }
         },
         "tile test.tsx": {
@@ -168,22 +176,22 @@
         "finn2.tsx",
         "mappa.tmx",
         "C:/Users/Pietro/Downloads/mappaNuova.tmx",
-        "C:/Users/Pietro/Downloads/maps/maps/newMap.tmx"
+        "livelloPrincipale.tmx"
     ],
     "project": "giocoGiava.tiled-project",
     "recentFiles": [
+        "mappa.tmx",
+        "livelloPrincipale.tmx",
+        "newMap.tmx",
+        "mappa2.tmx",
         "tubi.tsx",
         "liane.tsx",
         "liane8bit.tsx",
-        "mappa2.tmx",
         "tile test.tsx",
         "tiles.tsx",
         "catenevolandiecc.tsx",
         "Dungeon.tsx",
-        "esterni.tsx",
-        "finn.tsx",
-        "C:/Users/Pietro/Downloads/maps/maps/newMap.tmx",
-        "C:/Users/Pietro/Downloads/mappaNuova.tmx"
+        "esterni.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
