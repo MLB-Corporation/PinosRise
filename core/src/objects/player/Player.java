@@ -3,6 +3,7 @@ package objects.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -15,30 +16,35 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.mbl.pinoscastle.screens.GameScreen;
 import com.badlogic.gdx.utils.Timer;
+import utils.PlayerContactListener;
 import utils.TileMapHelper;
 
 import static utils.Constants.PPM;
 
 public class Player extends GameEntity {
 
+    private static int groundContacts = 1;
 
-    private boolean isOnGround = true;
+    // Other methods...
 
-    // This method should be called when a collision with the ground is detected
-    public void hitGround() {
-        isOnGround = true;
+    public static void hitGround() {
+        if (groundContacts == 0) {
+            groundContacts++;
+        }
     }
 
-    // This method should be called when the player leaves the ground
-    public void leaveGround() {
-        isOnGround = false;
+    public static void leaveGround() {
+        if (groundContacts > 0) {
+            groundContacts--;
+        }
     }
 
     public boolean isOnGround() {
-        return this.isOnGround;
+        return this.groundContacts > 0;
     }
 
     private GameScreen gameScreen;
@@ -49,11 +55,15 @@ public class Player extends GameEntity {
 
     private Rectangle rect;
 
+    private World world;
+
+    private PlayerContactListener contactListener;
+
     private int jumpCount;
     private Sprite sprite;
     private TiledMap tiledMap; // Reference to the TiledMap
 
-    public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen, RectangleMapObject mapObject) {
+    public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen, RectangleMapObject mapObject, World world) {
         super(width, height, body);
         this.tileMapHelper = new TileMapHelper(gameScreen);
         this.speed = 2.5f;
@@ -65,6 +75,8 @@ public class Player extends GameEntity {
         this.sprite = new Sprite(texture);
         this.sprite.setSize(width / PPM, height / PPM);
         this.sprite.setOrigin(width / (2 * PPM), height / (2 * PPM));
+        this.contactListener =  new PlayerContactListener(this, world, gameScreen);
+        this.world = world;
     }
 
     @Override
@@ -113,20 +125,27 @@ public class Player extends GameEntity {
         jumpTimer += Gdx.graphics.getDeltaTime();
 
         // Check if the space key is pressed, the player is on the ground, and at least 1 second has passed since the last jump
-        if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && isOnGround && jumpTimer >= 0.5){
-            jumpCount = 1;
-            float force = body.getMass()*10;
-            body.setLinearVelocity(body.getLinearVelocity().x, 0);
-            body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
-            jumpCount++;
-            isOnGround = false; // The player is no longer on the ground after jumping
+        if(Gdx.input.isKeyPressed(Input.Keys.SPACE) ){
 
-            // Reset the jump timer
-            jumpTimer = 0;
+            if (isOnGround()) {
+                groundContacts = 0;
+                System.out.println("JUMPING");
+                jumpCount = 1;
+                float force = body.getMass()*10;
+                body.setLinearVelocity(body.getLinearVelocity().x, 0);
+                body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
+                jumpCount++;
+
+                // Reset the jump timer
+                jumpTimer = 0;
+            }
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+            System.out.println("onGround? " + groundContacts);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            // Get the player's position
+
             Vector2 playerPosition = body.getPosition();
 
             // Get the fixtures under the player
@@ -165,9 +184,7 @@ public class Player extends GameEntity {
 
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y < 7 ? body.getLinearVelocity().y : 7);
     }
-    public boolean isJumping() {
-        return !isOnGround && body.getLinearVelocity().y > 0;
-    }
+
     private void checkTeleport() {
         Vector2 playerPosition1 = new Vector2(body.getPosition().x, body.getPosition().y);
         MapObjects objects1 = tiledMap.getLayers().get("Objects").getObjects(); // Access objects from the "Objects" layer
@@ -232,11 +249,18 @@ public class Player extends GameEntity {
 
             TiledMap newMap = new TmxMapLoader().load("maps/livelloPrincipale.tmx");
 
-            this.setPosition(new Vector2(0, 0)); // Imposta la posizione del giocatore
-            tileMapHelper.resetMap(newMap);
-            // Imposta la nuova mappa nella classe GameScreen
+            // Set the new map in the GameScreen and TileMapHelper
             gameScreen.setTiledMap(newMap);
+            tileMapHelper.resetMap(newMap);
             tileMapHelper.setupMap("maps/livelloPrincipale.tmx");
+
+            // Set the player's position
+            this.setPosition(new Vector2(0, 0));
+
+
+            // Create a new PlayerContactListener for the player and the new world
+            this.contactListener = new PlayerContactListener(this, world, gameScreen);
+            gameScreen.setContactListener(contactListener);
 
 
 
