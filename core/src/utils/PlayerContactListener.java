@@ -33,7 +33,8 @@ public class PlayerContactListener implements ContactListener {
 
         if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
             boolean isNotVert = !fixtureB.getUserData().toString().equals("verticalWall");
-            if (fixtureA.getBody() == player.getBody() && isNotVert) {
+            if ((fixtureA.getBody() == player.getBody() && isNotVert)) {
+                System.out.println("Player hit the ground");
                 player.hitGround();
             }
 
@@ -55,6 +56,9 @@ public class PlayerContactListener implements ContactListener {
     public void endContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
+        if(fixtureB.getUserData() == null) {
+            return;
+        }
         boolean isNotVert;
         try {
             isNotVert = !fixtureB.getUserData().toString().equals("verticalWall");
@@ -81,8 +85,13 @@ public class PlayerContactListener implements ContactListener {
         Fixture fixtureB = contact.getFixtureB();
 
 
-        boolean isPlayerA = "player".equals(fixtureA.getUserData());
-        boolean isMovingPlatformB = fixtureB.getUserData().toString().contains("moving");
+        boolean isPlayerA = true;
+        boolean isMovingPlatformB= false;
+
+        if(fixtureA.getUserData() != null && fixtureB.getUserData()!= null) {
+            isPlayerA = "player".equals(fixtureA.getUserData());
+            isMovingPlatformB = fixtureB.getUserData().toString().contains("moving");
+        }
 
         Body playerBody = isPlayerA ? fixtureA.getBody() : fixtureB.getBody();
         Body platformBody = isMovingPlatformB ? fixtureB.getBody() : fixtureA.getBody();

@@ -6,6 +6,8 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -30,6 +32,9 @@ public class GameScreen extends ScreenAdapter {
     private SpriteBatch batch;
     private World world;
 
+    public int cameraWidth = 400;
+    public int cameraHeight = 400;
+
     private Box2DDebugRenderer debugRenderer;
 
     private OrthogonalTiledMapRenderer renderer;
@@ -52,7 +57,7 @@ public class GameScreen extends ScreenAdapter {
         this.batch = new SpriteBatch();
         this.world = new World(new Vector2(0, -25f), false);
         this.tileMapHelper = new TileMapHelper(this);
-        this.renderer = tileMapHelper.setupMap();
+        this.renderer = tileMapHelper.setupMap("maps/newMap.tmx");
         this.contactListener = new PlayerContactListener(player, world, this); // Modify this line
         this.parent = parent;
 
@@ -99,14 +104,25 @@ public class GameScreen extends ScreenAdapter {
     private void cameraUpdate() {
         Vector3 position = camera.position;
         position.x = Math.round(player.getBody().getPosition().x * PPM * 10)/10f;
-
-
         position.y = Math.round(player.getBody().getPosition().y * PPM * 10)/10f;
+
+        // Controllo dei limiti della mappa
+        if (position.x < camera.viewportWidth / 2) {
+            position.x = camera.viewportWidth / 2;
+        } else if (position.x > getMapWidth() - camera.viewportWidth / 2) {
+            position.x = getMapWidth() - camera.viewportWidth / 2;
+        }
+
+        if (position.y < camera.viewportHeight / 2) {
+            position.y = camera.viewportHeight / 2;
+        } else if (position.y > getMapHeight() - camera.viewportHeight / 2) {
+            position.y = getMapHeight() - camera.viewportHeight / 2;
+        }
 
         camera.position.set(position);
 
-        camera.viewportWidth = 500;
-        camera.viewportHeight = 500 * (Gdx.graphics.getHeight() / (float)Gdx.graphics.getWidth());
+        camera.viewportWidth = cameraWidth;
+        camera.viewportHeight = cameraHeight * (Gdx.graphics.getHeight() / (float)Gdx.graphics.getWidth());
         camera.update();
     }
 
@@ -129,14 +145,40 @@ public class GameScreen extends ScreenAdapter {
         }
 
         batch.end();
-        //debugRenderer.render(world, camera.combined.scl(PPM));
+        debugRenderer.render(world, camera.combined.scl(PPM));
+    }
+
+    public void setCameraWidth(int cameraWidth) {
+        this.cameraWidth = cameraWidth;
+    }
+
+    public void setCameraHeight(int cameraHeight) {
+        this.cameraHeight = cameraHeight;
     }
 
     public World getWorld() {
         return world;
     }
 
+    public int getMapWidth() {
+        int tileWidth = ((TiledMapTileLayer) tileMapHelper.getMap().getLayers().get(0)).getTileWidth();
+        return tileWidth * tileMapHelper.getMap().getProperties().get("width", Integer.class);
+    }
+
+    public int getMapHeight() {
+        int tileHeight = ((TiledMapTileLayer) tileMapHelper.getMap().getLayers().get(0)).getTileHeight();
+        return tileHeight * tileMapHelper.getMap().getProperties().get("height", Integer.class);
+    }
+
     public void setPlayer(Player player){
         this.player = player;
+    }
+
+    public void setTiledMap(TiledMap newMap) {
+        this.renderer.setMap(newMap);
+    }
+
+    public void resetRenderer(TiledMap newMap) {
+        this.renderer = new OrthogonalTiledMapRenderer(newMap);
     }
 }

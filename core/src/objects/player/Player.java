@@ -3,6 +3,7 @@ package objects.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -17,6 +18,8 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.utils.Array;
 import com.mbl.pinoscastle.screens.GameScreen;
 import com.badlogic.gdx.utils.Timer;
+import utils.TileMapHelper;
+
 import static utils.Constants.PPM;
 
 public class Player extends GameEntity {
@@ -40,6 +43,8 @@ public class Player extends GameEntity {
 
     private GameScreen gameScreen;
 
+    private TileMapHelper tileMapHelper;
+
     private Texture texture;
 
     private Rectangle rect;
@@ -50,6 +55,7 @@ public class Player extends GameEntity {
 
     public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen, RectangleMapObject mapObject) {
         super(width, height, body);
+        this.tileMapHelper = new TileMapHelper(gameScreen);
         this.speed = 2.5f;
         this.jumpCount = 0;
         this.rect = mapObject.getRectangle();
@@ -87,10 +93,13 @@ public class Player extends GameEntity {
     private void checkUserInput() {
         velX = 0;
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
-            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
-                velX = (float)1.5;
-            else
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+                velX = (float) 1.5;
+            }
+
+            else {
                 velX = 1;
+            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
@@ -180,13 +189,62 @@ public class Player extends GameEntity {
                         teleportToDestination(objectsCopy1, objectName.replace("C", "D"));
                     } else if (objectName.endsWith("D")) {
                         teleportToDestination(objectsCopy1, objectName.replace("D", "C"));
+                    } else if (objectName.equals("zoom")) {
+                        Timer.schedule(new Timer.Task() {
+                            int counter = 0; // Contatore per tracciare il numero di secondi trascorsi
+
+                            @Override
+                            public void run() {
+                                if (counter < 300) { // Se sono trascorsi meno di 10 secondi
+                                    gameScreen.setCameraWidth(gameScreen.cameraWidth - 1);
+                                    gameScreen.setCameraHeight(gameScreen.cameraHeight - 1);
+                                    counter++; // Incrementa il contatore
+                                } else {
+                                    this.cancel(); // Annulla il task se sono trascorsi 10 secondi
+                                }
+                            }
+                        }, 0, 0.001f);
+                    } else if (objectName.equals("dezoom")) {
+                        Timer.schedule(new Timer.Task() {
+                            int counter = 0; // Contatore per tracciare il numero di secondi trascorsi
+
+                            @Override
+                            public void run() {
+                                if (counter < 400) { // Se sono trascorsi meno di 10 secondi
+                                    gameScreen.setCameraWidth(gameScreen.cameraWidth + 1);
+                                    gameScreen.setCameraHeight(gameScreen.cameraHeight + 1);
+                                    counter++; // Incrementa il contatore
+                                } else {
+                                    this.cancel(); // Annulla il task se sono trascorsi 10 secondi
+                                }
+                            }
+                        }, 0, 0.001f);
                     }
+
+
+
                 }
             }
         }
 
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+
+            TiledMap newMap = new TmxMapLoader().load("maps/livelloPrincipale.tmx");
+
+            this.setPosition(new Vector2(0, 0)); // Imposta la posizione del giocatore
+            tileMapHelper.resetMap(newMap);
+            // Imposta la nuova mappa nella classe GameScreen
+            gameScreen.setTiledMap(newMap);
+            tileMapHelper.setupMap("maps/livelloPrincipale.tmx");
+
+
+
+
+
+
+
+
             Vector2 playerPosition = new Vector2(body.getPosition().x, body.getPosition().y);
             MapObjects objects = tiledMap.getLayers().get("Objects").getObjects(); // Access objects from the "Objects" layer
 
@@ -213,6 +271,10 @@ public class Player extends GameEntity {
         }
     }
 
+    private void setPosition(Vector2 vector2) {
+        body.setTransform(vector2, body.getAngle());
+    }
+
     private void teleportToDestination(MapObjects objects, String destinationName) {
         for (MapObject destinationObject : objects) {
             if (destinationName.equals(destinationObject.getName())) {
@@ -231,6 +293,15 @@ public class Player extends GameEntity {
     }
 
 
+    public Vector2 getPlayerPosition() {
+        return new Vector2(body.getPosition().x, body.getPosition().y);
+    }
 
+    public int getPlayerWidth() {
+        return (int) width;
+    }
 
+    public int getPlayerHeight() {
+        return (int) height;
+    }
 }

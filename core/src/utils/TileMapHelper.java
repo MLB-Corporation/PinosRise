@@ -1,5 +1,6 @@
 package utils;
 
+import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.mbl.pinoscastle.screens.GameScreen;
 import objects.obstacles.MovingPlatform;
 import objects.player.Player;
@@ -22,17 +24,33 @@ public class TileMapHelper {
 
     private TiledMap map;
     private GameScreen gameScreen;
+    Array<Body> bodies = new Array<>();
 
     public TileMapHelper(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
     }
 
-    public OrthogonalTiledMapRenderer setupMap() {
-        map = new TmxMapLoader().load("maps/newMap.tmx");
+    public OrthogonalTiledMapRenderer setupMap(String mappa) {
+       // Load the new map
+        map = new TmxMapLoader().load(mappa);
         parseMapObjects(map.getLayers().get("Objects").getObjects());
         parseTileCollisions();
         return new OrthogonalTiledMapRenderer(map);
     }
+
+    public void resetMap(Map map) {
+        gameScreen.getWorld().getBodies(bodies);
+
+        System.out.println("Total bodies: " + bodies.size);
+
+        for (Body body : bodies) {
+            gameScreen.getWorld().destroyBody(body);
+        }
+
+        //recreate player body
+    }
+
+
 
     private void parseMapObjects(MapObjects objects){
         for(MapObject mapObject : objects) {
@@ -115,9 +133,6 @@ private void parseTileCollisions() {
     private void createStaticBodyForTile(float startPosition, float orthogonalPosition, float length, float thickness, boolean isHorizontal, boolean isOneWay, boolean isSlide, boolean isVerticalWall) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        if(isSlide) {
-            System.out.println("slide");
-        }
 
         // Calculate position based on orientation
         float posX, posY;
@@ -138,7 +153,9 @@ private void parseTileCollisions() {
             shape.setAsBox(thickness / 2 / PPM, length / 2 / PPM);
         }
 
-        Fixture fixture = gameScreen.getWorld().createBody(bodyDef).createFixture(shape, 0);
+        // Create the body and set the userData
+        Body body = gameScreen.getWorld().createBody(bodyDef);
+        Fixture fixture = body.createFixture(shape, 0);
         if(isVerticalWall) {
             fixture.setUserData("verticalWall");
         }
@@ -151,6 +168,10 @@ private void parseTileCollisions() {
         if(!isSlide && !isOneWay && !isVerticalWall){
             fixture.setUserData("normal");
         }
+
+        // Add the body to the array
+        bodies.add(body);
+
         shape.dispose();
     }
 
@@ -179,5 +200,9 @@ private void parseTileCollisions() {
         polygonShape.set(worldVertices);
         return polygonShape;
 
+    }
+
+    public Map getMap() {
+        return map;
     }
 }
