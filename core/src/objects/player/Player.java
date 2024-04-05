@@ -234,7 +234,7 @@ public class Player extends GameEntity {
                         gameScreen.setTiledMap(newMap);
                         tileMapHelper.setupMap("maps/livelloPrincipale.tmx");
                         // Spawn the player in front of the object "spawn"
-
+                        teleportToDestination(newMap.getLayers().get("Objects").getObjects(), "spawn");
 
                     } else if (objectName.equals("zoom")) {
                         Timer.schedule(new Timer.Task() {
