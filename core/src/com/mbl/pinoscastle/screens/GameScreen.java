@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.mbl.pinoscastle.GameClass;
+import objects.obstacles.MovableBox;
 import objects.obstacles.MovingPlatform;
 import objects.player.Player;
 import utils.PlayerContactListener;
@@ -41,6 +42,9 @@ public class GameScreen extends ScreenAdapter {
     private TileMapHelper tileMapHelper;
 
     private Array<MovingPlatform> movingPlatforms = new Array<>();
+
+    private Array<MovableBox> movableBoxes = new Array<>();
+
 
     private PlayerContactListener contactListener; // Add this line
 
@@ -76,6 +80,7 @@ public class GameScreen extends ScreenAdapter {
     public void addMovingPlatform(MovingPlatform plat) {
         movingPlatforms.add(plat);
     }
+    public void addBox(MovableBox box) { movableBoxes.add(box); }
 
 
     private void update(float delta) {
@@ -147,8 +152,13 @@ public class GameScreen extends ScreenAdapter {
             player.render(batch);
         }
 
+        for(MovableBox box : movableBoxes) {
+            box.render(batch);
+            player.render(batch);
+        }
+
         batch.end();
-        debugRenderer.render(world, camera.combined.scl(PPM));
+        //debugRenderer.render(world, camera.combined.scl(PPM));
     }
 
     public void setCameraWidth(int cameraWidth) {

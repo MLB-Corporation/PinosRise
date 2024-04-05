@@ -149,7 +149,6 @@ public class Player extends GameEntity {
 
             if (isOnGround()) {
                 groundContacts = 0;
-                System.out.println("JUMPING");
                 jumpCount = 1;
                 float force = body.getMass()*10;
                 body.setLinearVelocity(body.getLinearVelocity().x, 0);
@@ -275,6 +274,8 @@ public class Player extends GameEntity {
         }
 
 
+
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             Vector2 playerPosition = new Vector2(body.getPosition().x, body.getPosition().y);
             MapObjects objects = tiledMap.getLayers().get("Objects").getObjects(); // Access objects from the "Objects" layer
@@ -300,6 +301,10 @@ public class Player extends GameEntity {
                 }
             }
         }
+    }
+
+    public void fixGround() {
+        groundContacts = 1;
     }
 
     private void setPosition(Vector2 vector2) {

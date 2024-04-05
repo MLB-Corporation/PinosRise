@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.mbl.pinoscastle.screens.GameScreen;
+import objects.obstacles.MovableBox;
 import objects.obstacles.MovingPlatform;
 import objects.player.Player;
 
@@ -41,7 +42,7 @@ public class TileMapHelper {
     public void resetMap(Map map) {
         gameScreen.getWorld().getBodies(bodies);
 
-        System.out.println("Total bodies: " + bodies.size);
+
 
         for (Body body : bodies) {
             gameScreen.getWorld().destroyBody(body);
@@ -62,12 +63,15 @@ public class TileMapHelper {
                 Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
 
                 String rectangleName = mapObject.getName();
+
                 if(mapObject.getProperties().containsKey("moving")) {
                     gameScreen.addMovingPlatform(new MovingPlatform(gameScreen.getWorld(), (RectangleMapObject) mapObject, mapObject.getProperties().get("time").toString()));
-                    System.out.println("Altezza plat: " + rectangle.height);
+                }
+
+                if(mapObject.getName().equals("box")) {
+                    gameScreen.addBox(new MovableBox(gameScreen.getWorld(), (RectangleMapObject) mapObject, mapObject.getProperties().get("type").toString()));
                 }
                 if(rectangleName.equals("player")) {
-                    System.out.println("Altezza player: " + rectangle.height);
                     PolygonShape shape = new PolygonShape();
                     shape.setAsBox(rectangle.getWidth()/2/PPM, rectangle.getHeight()/2/PPM);
                     Body body = BodyHelperService.createBody(
@@ -101,6 +105,7 @@ private void parseTileCollisions() {
 
                     // Handle horizontal chains
                     for (int y = 0; y < tileLayer.getHeight(); y++) {
+
                         int counter = 0;
                         int startX = -1; // Initialize start X position outside valid range
                         for (int x = 0; x <= tileLayer.getWidth(); x++) {
