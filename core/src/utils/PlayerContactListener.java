@@ -2,8 +2,14 @@ package utils;
 
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.WeldJoint;
+import com.badlogic.gdx.utils.Timer;
 import com.mbl.pinoscastle.screens.GameScreen;
+import jdk.jfr.internal.LogLevel;
+import jdk.jfr.internal.LogTag;
 import objects.player.Player;
+
+import java.util.logging.Logger;
+import java.util.logging.LoggingPermission;
 
 public class PlayerContactListener implements ContactListener {
 
@@ -14,6 +20,14 @@ public class PlayerContactListener implements ContactListener {
     private Body platform;
 
     private float originalFriction;
+
+    public boolean onGround = false;
+
+
+
+    public boolean getOnGround() {
+        return onGround;
+    }
 
 
 
@@ -30,11 +44,16 @@ public class PlayerContactListener implements ContactListener {
     public void beginContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
+        System.out.println(fixtureA.getBody().getPosition().toString()+ fixtureB);
 
         if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
-            boolean isNotVert = !fixtureB.getUserData().toString().equals("verticalWall");
-            if ((fixtureA.getBody() == player.getBody() && isNotVert)) {
-                player.hitGround();
+
+            System.out.println(fixtureA.getUserData().toString() + " " + fixtureB.getUserData().toString());
+            boolean isNotVert = !fixtureB.getUserData().toString().equals("verticalWall") && !fixtureA.getUserData().toString().equalsIgnoreCase("verticalWall");
+            if ((isNotVert) && (fixtureA.getUserData().toString().equals("player") || fixtureB.getUserData().toString().equals("player"))) {
+                System.out.println("OAOOOOAOOA");
+                Player.hitGround();
+
             }
 
             // Check for player beginning contact with a moving platform
@@ -42,6 +61,8 @@ public class PlayerContactListener implements ContactListener {
                 // Store a reference to the platform's Body
                 platform = fixtureA.getUserData().toString().contains("moving") ? fixtureA.getBody() : fixtureB.getBody();
             }
+
+
         }
 
 
@@ -55,25 +76,20 @@ public class PlayerContactListener implements ContactListener {
     public void endContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
-        if(fixtureB.getUserData() == null) {
-            return;
-        }
-        boolean isNotVert;
-        try {
-            isNotVert = !fixtureB.getUserData().toString().equals("verticalWall");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
+            System.out.println(fixtureA.getUserData().toString() + " " + fixtureB.getUserData().toString());
+            boolean isNotVert = !fixtureB.getUserData().toString().equals("verticalWall") && !fixtureA.getUserData().toString().equalsIgnoreCase("verticalWall");
 
         // Check for player leaving the ground
-        if (fixtureA.getBody() == player.getBody() && isNotVert) {
-            player.leaveGround();
-        }
+            if ((isNotVert) && (fixtureA.getUserData().toString().equals("player") || fixtureB.getUserData().toString().equals("player"))) {
+                Player.leaveGround();
+            }
 
-        // Check for player ending contact with a moving platform
-        if (platform != null && ("moving".equals(fixtureA.getUserData()) || "moving".equals(fixtureB.getUserData()))) {
-            // Set the platform reference to null
-            platform = null;
+            // Check for player ending contact with a moving platform
+            if (platform != null && ("moving".equals(fixtureA.getUserData()) || "moving".equals(fixtureB.getUserData()))) {
+                // Set the platform reference to null
+                platform = null;
+            }
         }
 
     }
@@ -84,38 +100,31 @@ public class PlayerContactListener implements ContactListener {
         Fixture fixtureB = contact.getFixtureB();
 
 
-        boolean isPlayerA = true;
-        boolean isMovingPlatformB= false;
-
-        if(fixtureA.getUserData() != null && fixtureB.getUserData()!= null) {
-            isPlayerA = "player".equals(fixtureA.getUserData());
-            isMovingPlatformB = fixtureB.getUserData().toString().contains("moving");
-        }
-
-        Body playerBody = isPlayerA ? fixtureA.getBody() : fixtureB.getBody();
-        Body platformBody = isMovingPlatformB ? fixtureB.getBody() : fixtureA.getBody();
-
-
 
         // Determine which fixture is the player and which is the platform
         Fixture playerFixture = fixtureA.getUserData() != null && fixtureA.getUserData().equals("player") ? fixtureA : fixtureB.getUserData() != null && fixtureB.getUserData().equals("player") ? fixtureB : null;
-        Fixture platformFixture = fixtureA.getUserData() != null && fixtureA.getUserData().equals("oneWay") ? fixtureA : fixtureB.getUserData() != null && fixtureB.getUserData().equals("oneWay") ? fixtureB : null;
 
 
-
-
-            if (player.getBody().getLinearVelocity().y > 0 && fixtureB.getUserData().toString().contains("oneWay")) {
+        if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
+            Body playerBody = fixtureA.getUserData().toString().equals("player") ? fixtureA.getBody() : fixtureB.getBody();
+            Fixture platformFixture = fixtureA.getUserData().toString().equals("player") ? fixtureB : fixtureA;
+            if (playerBody.getLinearVelocity().y > 0 && (fixtureA.getUserData().toString().contains("oneWay") || fixtureB.getUserData().toString().contains("oneWay"))) {
                 // Player is moving upwards; disable collision with the one-way platform
-                contact.setEnabled(false);
+                platformFixture.setSensor(true);
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        platformFixture.setSensor(false);
+                    }
+                }, 0.3f);
+
+
+
+                System.out.println("Disabilitato");
+
+
             }
-
-        if ("slide".equals(fixtureA.getUserData()) || "slide".equals(fixtureB.getUserData())) {
-
-            // Set the player's linear velocity to a constant value in the right direction
-            player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x + 1, player.getBody().getLinearVelocity().y);
-
         }
-
     }
 
 
