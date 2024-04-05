@@ -12,7 +12,7 @@ public class LoadingScreen implements Screen {
     }
     @Override
     public void show() {
-
+        // ANIMATED TILES
     }
 
     @Override
