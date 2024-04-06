@@ -103,11 +103,11 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 3,
+            "scale": 1,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 312,
-                "y": 2399.833333333333
+                "x": 394,
+                "y": 4414
             }
         },
         "mappa.tmx": {
@@ -136,11 +136,11 @@
             "expandedObjectLayers": [
                 12
             ],
-            "scale": 0.125,
+            "scale": 0.25,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1088,
-                "y": 5616
+                "x": 296,
+                "y": 6156
             }
         },
         "tile test.tsx": {
@@ -184,6 +184,8 @@
     ],
     "project": "giocoGiava.tiled-project",
     "recentFiles": [
+        "livelloPrincipale.tmx",
+        "newMap.tmx",
         "tubi.tsx",
         "liane.tsx",
         "liane8bit.tsx",
@@ -193,9 +195,7 @@
         "catenevolandiecc.tsx",
         "Dungeon.tsx",
         "esterni.tsx",
-        "finn.tsx",
-        "finn2.tsx",
-        "mappa.tmx"
+        "finn.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

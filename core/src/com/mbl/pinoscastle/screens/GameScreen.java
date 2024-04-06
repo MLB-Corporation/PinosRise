@@ -118,14 +118,14 @@ public class GameScreen extends ScreenAdapter {
         // Controllo dei limiti della mappa
         if (position.x < camera.viewportWidth / 2) {
             position.x = camera.viewportWidth / 2;
-        } else if (position.x > getMapWidth() - camera.viewportWidth / 2) {
-            position.x = getMapWidth() - camera.viewportWidth / 2;
+        } else if (position.x > getMapWidth(this.renderer.getMap()) - camera.viewportWidth / 2) {
+            position.x = getMapWidth(this.renderer.getMap()) - camera.viewportWidth / 2;
         }
 
         if (position.y < camera.viewportHeight / 2) {
             position.y = camera.viewportHeight / 2;
-        } else if (position.y > getMapHeight() - camera.viewportHeight / 2) {
-            position.y = getMapHeight() - camera.viewportHeight / 2;
+        } else if (position.y > getMapHeight(this.renderer.getMap()) - camera.viewportHeight / 2) {
+            position.y = getMapHeight(this.renderer.getMap()) - camera.viewportHeight / 2;
         }
 
         camera.position.set(position);
@@ -173,14 +173,14 @@ public class GameScreen extends ScreenAdapter {
         return world;
     }
 
-    public int getMapWidth() {
-        int tileWidth = ((TiledMapTileLayer) tileMapHelper.getMap().getLayers().get(0)).getTileWidth();
-        return tileWidth * tileMapHelper.getMap().getProperties().get("width", Integer.class);
+    public int getMapWidth(TiledMap map) {
+        int tileWidth = ((TiledMapTileLayer) map.getLayers().get(0)).getTileWidth();
+        return tileWidth * map.getProperties().get("width", Integer.class);
     }
 
-    public int getMapHeight() {
-        int tileHeight = ((TiledMapTileLayer) tileMapHelper.getMap().getLayers().get(0)).getTileHeight();
-        return tileHeight * tileMapHelper.getMap().getProperties().get("height", Integer.class);
+    public int getMapHeight(TiledMap map) {
+        int tileHeight = ((TiledMapTileLayer) map.getLayers().get(0)).getTileHeight();
+        return tileHeight * map.getProperties().get("height", Integer.class);
     }
 
     public void setPlayer(Player player){
@@ -189,6 +189,9 @@ public class GameScreen extends ScreenAdapter {
 
     public void setTiledMap(TiledMap newMap) {
         this.renderer.setMap(newMap);
+        camera.viewportWidth = getMapWidth(newMap);
+        camera.viewportHeight = getMapHeight(newMap);
+        camera.update();
     }
 
     public void resetRenderer(TiledMap newMap) {
