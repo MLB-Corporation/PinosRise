@@ -38,8 +38,8 @@
             "scale": 0.75,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 294.66666666666663,
-                "y": 468
+                "x": 192,
+                "y": 67.33333333333331
             }
         },
         "C:/Users/Pietro/Downloads/maps/maps/Dungeon.tsx": {
@@ -106,8 +106,8 @@
             "scale": 3,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 111.33333333333331,
-                "y": 4527.333333333333
+                "x": 312,
+                "y": 2399.833333333333
             }
         },
         "mappa.tmx": {
@@ -120,8 +120,8 @@
             "scale": 0.5,
             "selectedLayer": 13,
             "viewCenter": {
-                "x": 1198,
-                "y": 2394
+                "x": 1200,
+                "y": 2395
             }
         },
         "mappa2.tmx": {
@@ -129,18 +129,18 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 958.8014981273409,
-                "y": 639.6215257244235
+                "y": 638.9907352651292
             }
         },
         "newMap.tmx": {
             "expandedObjectLayers": [
                 12
             ],
-            "scale": 2,
+            "scale": 0.125,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 271.5,
-                "y": 6487.5
+                "x": 1088,
+                "y": 5616
             }
         },
         "tile test.tsx": {

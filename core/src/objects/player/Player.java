@@ -62,6 +62,8 @@ public class Player extends GameEntity {
     private int jumpCount;
     private Sprite sprite;
     private TiledMap tiledMap; // Reference to the TiledMap
+    private float jumpCooldown = 0.0f;
+    private boolean canJump = true;
 
     public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen, RectangleMapObject mapObject, World world) {
         super(width, height, body);
@@ -83,6 +85,13 @@ public class Player extends GameEntity {
     public void update() {
         x = body.getPosition().x * PPM;
         y = body.getPosition().y * PPM;
+        if (!canJump) {
+            jumpCooldown += Gdx.graphics.getDeltaTime();
+            if (jumpCooldown >= 0.5f) {
+                canJump = true;
+                jumpCooldown = 0.0f;
+            }
+        }
 
         checkUserInput();
         sprite.setPosition(x - sprite.getWidth() / 2, y - sprite.getHeight() / 2);
@@ -147,7 +156,7 @@ public class Player extends GameEntity {
         // Check if the space key is pressed, the player is on the ground, and at least 1 second has passed since the last jump
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE) ){
 
-            if (isOnGround()) {
+            if (isOnGround() && canJump) {
                 groundContacts = 0;
                 jumpCount = 1;
                 float force = body.getMass()*10;
@@ -157,6 +166,7 @@ public class Player extends GameEntity {
 
                 // Reset the jump timer
                 jumpTimer = 0;
+                canJump = false;
             }
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
