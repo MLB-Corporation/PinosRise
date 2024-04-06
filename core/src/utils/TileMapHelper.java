@@ -64,10 +64,6 @@ public class TileMapHelper {
 
                 String rectangleName = mapObject.getName();
 
-                if(mapObject.getName().contains("spawn")) {
-                    return;
-                }
-
                 if(mapObject.getProperties().containsKey("moving")) {
                     gameScreen.addMovingPlatform(new MovingPlatform(gameScreen.getWorld(), (RectangleMapObject) mapObject, mapObject.getProperties().get("time").toString()));
                 }
