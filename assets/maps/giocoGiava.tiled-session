@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "finn2.tsx",
+    "activeFile": "newMap.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -136,11 +136,11 @@
             "expandedObjectLayers": [
                 12
             ],
-            "scale": 0.33,
-            "selectedLayer": 0,
+            "scale": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 175.75757575757552,
-                "y": 878.7878787878789
+                "x": 271.5,
+                "y": 6487.5
             }
         },
         "tile test.tsx": {
@@ -179,7 +179,8 @@
         "finn2.tsx",
         "mappa.tmx",
         "C:/Users/Pietro/Downloads/mappaNuova.tmx",
-        "livelloPrincipale.tmx"
+        "livelloPrincipale.tmx",
+        "newMap.tmx"
     ],
     "project": "giocoGiava.tiled-project",
     "recentFiles": [
@@ -193,8 +194,8 @@
         "Dungeon.tsx",
         "esterni.tsx",
         "finn.tsx",
-        "livelloPrincipale.tmx",
-        "C:/Users/Pietro/Downloads/mappaNuova.tmx"
+        "finn2.tsx",
+        "mappa.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
