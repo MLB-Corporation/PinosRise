@@ -2,6 +2,8 @@ package objects.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -31,13 +33,13 @@ public class Player extends GameEntity {
 
     // Other methods...
 
-    public static void hitGround() {
+    public void hitGround() {
         if (groundContacts == 0) {
             groundContacts++;
         }
     }
 
-    public static void leaveGround() {
+    public void leaveGround() {
         if (groundContacts > 0) {
             groundContacts--;
         }
@@ -63,6 +65,12 @@ public class Player extends GameEntity {
     private Sprite sprite;
     private TiledMap tiledMap; // Reference to the TiledMap
 
+    private float jumpCooldown = 0; // Add this line at the beginning of your class
+
+    Pixmap pixmap;
+    Texture darkness;
+
+
     public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen, RectangleMapObject mapObject, World world) {
         super(width, height, body);
         this.tileMapHelper = new TileMapHelper(gameScreen);
@@ -77,6 +85,10 @@ public class Player extends GameEntity {
         this.sprite.setOrigin(width / (2 * PPM), height / (2 * PPM));
         this.contactListener =  new PlayerContactListener(this, world, gameScreen);
         this.world = world;
+        this.pixmap = new Pixmap(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Pixmap.Format.RGBA8888);
+        darkness = new Texture(pixmap);
+
+
     }
 
     @Override
@@ -117,12 +129,18 @@ public class Player extends GameEntity {
         Sprite sprite = new Sprite(texture);
         sprite.setPosition(body.getPosition().x*PPM-widthInPixels/2, body.getPosition().y*PPM-heightInPixels/2);
         sprite.draw(batch);
+        batch.draw(darkness, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
 
     private float jumpTimer = 0; // Add this line at the beginning of your class
 
     private void checkUserInput() {
+
+        if (jumpCooldown > 0) {
+            jumpCooldown -= Gdx.graphics.getDeltaTime();
+        }
+
         velX = 0;
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
@@ -146,6 +164,12 @@ public class Player extends GameEntity {
 
         // Check if the space key is pressed, the player is on the ground, and at least 1 second has passed since the last jump
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE) ){
+            if(contactListener.isTouchingVerticalWall() && contactListener.checkContact() && !contactListener.isPlayerAboveGround()) {
+                //start a 0.5s timer, then return false
+                return;
+
+
+            }
 
             if (isOnGround()) {
                 groundContacts = 0;
@@ -205,6 +229,7 @@ public class Player extends GameEntity {
     }
 
     private void checkTeleport() {
+
         Vector2 playerPosition1 = new Vector2(body.getPosition().x, body.getPosition().y);
         MapObjects objects1 = tiledMap.getLayers().get("Objects").getObjects(); // Access objects from the "Objects" layer
 
@@ -265,6 +290,19 @@ public class Player extends GameEntity {
                                 }
                             }
                         }, 0, 0.001f);
+                    } else if (object.getName().equals("darkness")) {
+                        pixmap.setColor(new Color(0, 0, 0, 100f)); // Aumenta l'opacità
+                        pixmap.fill();
+                        darkness.dispose();
+                        darkness = new Texture(pixmap); // Create a new texture from the pixmap
+
+                        darkness.draw(pixmap,0, 0);
+
+
+                    } else if (object.getName().equals("lightness")) {
+                        pixmap.setColor(new Color(0, 0, 0, 0.5f)); // Riduce l'opacità
+                        pixmap.fill();
+                        darkness.draw(pixmap, 0, 0);
                     }
 
 
@@ -326,6 +364,9 @@ public class Player extends GameEntity {
 
     public void dispose() {
         texture.dispose();
+        darkness.dispose();
+        pixmap.dispose();
+
     }
 
 

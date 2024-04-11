@@ -93,7 +93,7 @@ public class TileMapHelper {
 
 
 
-private void parseTileCollisions() {
+    private void parseTileCollisions() {
         for (MapLayer layer : map.getLayers()) {
             if (layer instanceof TiledMapTileLayer) {
                 if (layer.getProperties().containsKey("collides")) {
@@ -101,32 +101,43 @@ private void parseTileCollisions() {
 
                     boolean isOneWayLayer = layer.getName().equalsIgnoreCase("OneWay");
                     boolean isSlideLayer = layer.getName().equalsIgnoreCase("slide");
-                    boolean isVerticalWall = layer.getName().equalsIgnoreCase("verWalls");
+                    boolean isVerticalWall = layer.getProperties().containsKey("vertical");
 
                     // Handle horizontal chains
-                    for (int y = 0; y < tileLayer.getHeight(); y++) {
-
-                        int counter = 0;
-                        int startX = -1; // Initialize start X position outside valid range
-                        for (int x = 0; x <= tileLayer.getWidth(); x++) {
-                            TiledMapTileLayer.Cell cell = x < tileLayer.getWidth() ? tileLayer.getCell(x, y) : null;
-                            if (cell != null && cell.getTile() != null) {
-                                if (startX == -1) {
-                                    startX = x; // Set start X position at the beginning of a new tile chain
-                                }
-                                counter++;
-                            } else if (counter > 0) {
-                                float width = counter * tileLayer.getTileWidth();
-                                float startXPosition = startX * tileLayer.getTileWidth();
-
-                                createStaticBodyForTile(startXPosition, y, width, tileLayer.getTileHeight(), true, isOneWayLayer, isSlideLayer, isVerticalWall);
-                                counter = 0;
-                                startX = -1; // Reset start X for the next chain
-                            }
+                    if(!isVerticalWall) {
+                        for (int y = 0; y < tileLayer.getHeight(); y++) {
+                            handleTileChains(tileLayer, y, true, isOneWayLayer, isSlideLayer, isVerticalWall);
                         }
                     }
 
+                    // Handle vertical chains if the layer has the "vertical" property
+                    if (isVerticalWall) {
+                        for (int x = 0; x < tileLayer.getWidth(); x++) {
+                            handleTileChains(tileLayer, x, false, isOneWayLayer, isSlideLayer, isVerticalWall);
+                        }
+                    }
                 }
+            }
+        }
+    }
+
+    private void handleTileChains(TiledMapTileLayer tileLayer, int position, boolean isHorizontal, boolean isOneWay, boolean isSlide, boolean isVerticalWall) {
+        int counter = 0;
+        int start = -1; // Initialize start position outside valid range
+        for (int i = 0; i <= (isHorizontal ? tileLayer.getWidth() : tileLayer.getHeight()); i++) {
+            TiledMapTileLayer.Cell cell = i < (isHorizontal ? tileLayer.getWidth() : tileLayer.getHeight()) ? (isHorizontal ? tileLayer.getCell(i, position) : tileLayer.getCell(position, i)) : null;
+            if (cell != null && cell.getTile() != null) {
+                if (start == -1) {
+                    start = i; // Set start position at the beginning of a new tile chain
+                }
+                counter++;
+            } else if (counter > 0) {
+                float length = counter * (isHorizontal ? tileLayer.getTileWidth() : tileLayer.getTileHeight());
+                float startPosition = start * (isHorizontal ? tileLayer.getTileWidth() : tileLayer.getTileHeight());
+
+                createStaticBodyForTile(startPosition, position, length, (isHorizontal ? tileLayer.getTileHeight() : tileLayer.getTileWidth()), isHorizontal, isOneWay, isSlide, isVerticalWall);
+                counter = 0;
+                start = -1; // Reset start position for the next chain
             }
         }
     }

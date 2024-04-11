@@ -1,5 +1,6 @@
 package utils;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.WeldJoint;
 import com.badlogic.gdx.utils.Array;
@@ -62,6 +63,54 @@ public class PlayerContactListener implements ContactListener {
         return false;
     }
 
+    public boolean isPlayerAboveGround() {
+        Array<Contact> contacts = new Array<>();
+        contacts = world.getContactList();
+
+        for (Contact contact : contacts) {
+            Fixture fixtureA = contact.getFixtureA();
+            Fixture fixtureB = contact.getFixtureB();
+            Fixture playerFixture = fixtureA.getUserData() != null && fixtureA.getUserData().equals("player") ? fixtureA : fixtureB.getUserData() != null && fixtureB.getUserData().equals("player") ? fixtureB : null;
+            Fixture secondFixture = fixtureA.getUserData() != null && fixtureA.getUserData().equals("player") ? fixtureB : fixtureB.getUserData() != null && fixtureB.getUserData().equals("player") ? fixtureA : null;
+
+            if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
+                if ((fixtureA.getUserData().equals("player") &&
+                        (fixtureB.getUserData().equals("box") || fixtureB.getUserData().equals("normal") || fixtureB.getUserData().equals("oneWay"))) ||
+                        (fixtureB.getUserData().equals("player") &&
+                        (fixtureB.getUserData().equals("player") &&
+                                (fixtureA.getUserData().equals("box") || fixtureA.getUserData().equals("normal") || fixtureA.getUserData().equals("oneWay"))))) {
+
+                        if (playerFixture.getBody().getPosition().y > secondFixture.getBody().getPosition().y) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isTouchingVerticalWall() {
+        //if the player is touching a vertical wall, return true
+        Array<Contact> contacts = new Array<>();
+        contacts = world.getContactList();
+
+        for (Contact contact : contacts) {
+            Fixture fixtureA = contact.getFixtureA();
+            Fixture fixtureB = contact.getFixtureB();
+
+            if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
+                if ((fixtureA.getUserData().equals("player") && fixtureB.getUserData().equals("verticalWall")) ||
+                        (fixtureB.getUserData().equals("player") && fixtureA.getUserData().equals("verticalWall"))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public void beginContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
@@ -72,9 +121,16 @@ public class PlayerContactListener implements ContactListener {
             System.out.println("Fixture A: " + fixtureA.getUserData() + "\nFixture B: " + fixtureB.getUserData() + "\n\n");
             boolean isBox = fixtureB.getUserData().toString().equals("box") || fixtureA.getUserData().toString().equalsIgnoreCase("box");
 
+            if(fixtureA.getUserData().equals("verticalWall") || fixtureB.getUserData().equals("verticalWall")) {
+                if(fixtureA.getUserData().equals("player") || fixtureB.getUserData().equals("player")) {
+                    player.leaveGround();
+                }
+            }
+
             if(player.isOnGround()){
-                if(((fixtureA.getUserData().toString().equals("player") && fixtureB.getUserData().toString().equals("normal") || fixtureB.getUserData().toString().toLowerCase().contains("oneway") )) || (fixtureB.getUserData().toString().equals("player") && fixtureA.getUserData().toString().equals("normal") || fixtureA.getUserData().toString().toLowerCase().contains("oneway") )){
-                    onGround = true;
+                System.out.println("onGround");
+                if(((fixtureA.getUserData().toString().equals("player") && (fixtureB.getUserData().toString().equals("normal") || fixtureB.getUserData().toString().toLowerCase().contains("oneway") ))) || (fixtureB.getUserData().toString().equals("player") && (fixtureA.getUserData().toString().equals("normal") || fixtureA.getUserData().toString().toLowerCase().contains("oneway")) )){
+                    player.hitGround();
                 }
             }
 
@@ -89,7 +145,7 @@ public class PlayerContactListener implements ContactListener {
 
             boolean isNotVert = !fixtureB.getUserData().toString().equals("verticalWall") && !fixtureA.getUserData().toString().equalsIgnoreCase("verticalWall");
             if ((isNotVert) && (fixtureA.getUserData().toString().equals("player") || fixtureB.getUserData().toString().equals("player"))) {
-                Player.hitGround();
+                player.hitGround();
 
             }
 
@@ -118,13 +174,13 @@ public class PlayerContactListener implements ContactListener {
 
             if(player.isOnGround()){
                 if(((fixtureA.getUserData().toString().equals("player") && fixtureB.getUserData().toString().equals("normal") || fixtureB.getUserData().toString().toLowerCase().contains("oneway") )) || (fixtureB.getUserData().toString().equals("player") && fixtureA.getUserData().toString().equals("normal") || fixtureA.getUserData().toString().toLowerCase().contains("oneway") )){
-                    onGround = false;
+                    player.leaveGround();
                 }
             boolean isNotVert = !fixtureB.getUserData().toString().equals("verticalWall") && !fixtureA.getUserData().toString().equalsIgnoreCase("verticalWall");
             boolean isNotBox = !fixtureB.getUserData().toString().equals("box") && !fixtureA.getUserData().toString().equalsIgnoreCase("box");
         // Check for player leaving the ground
             if ((isNotVert) && (fixtureA.getUserData().toString().equals("player") || fixtureB.getUserData().toString().equals("player"))) {
-                Player.leaveGround();
+                player.leaveGround();
             }
 
             // Check for player ending contact with a moving platform
@@ -151,8 +207,20 @@ public class PlayerContactListener implements ContactListener {
         if (fixtureA.getUserData() != null && fixtureB.getUserData() != null && playerFixture != null && secondFixture != null) {
 
 
+            if(isTouchingVerticalWall() && checkContact() && !isPlayerAboveGround()) {
+                //start a 0.5s timer, then return false
+                Body body = player.getBody();
+                float force = body.getMass()*10;
+
+                body.setLinearVelocity(body.getLinearVelocity().x, 0);
+                body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
+                body.applyLinearImpulse(new Vector2(0, -force), body.getPosition(), true);
+
+
+
+            }
                 if(playerFixture.getBody().getPosition().y > secondFixture.getBody().getPosition().y) {
-                    Player.hitGround();
+                    player.hitGround();
                 }
 
             Body playerBody = fixtureA.getUserData().toString().equals("player") ? fixtureA.getBody() : fixtureB.getBody();
