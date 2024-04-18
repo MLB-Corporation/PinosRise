@@ -15,8 +15,11 @@ import javax.imageio.ImageIO;
 public class LoadSave{
 
 
-    public static final String PLAYER_RUN = "player/run.png";
+    public static final String PLAYER_RUN_RIGHT = "player/right_run.png";
+    public static final String PLAYER_RUN_LEFT = "player/left_run.png";
     public static final String PLAYER_IDLE = "player/idle.png";
+    public static final String PLAYER_LEFT_JUMP = "player/left_jump.png";
+    public static final String PLAYER_RIGHT_JUMP = "player/right_jump.png";
 
 
 

@@ -205,8 +205,33 @@ public class Player extends GameEntity {
 
         velX = 0;
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
+            if(Gdx.input.isKeyPressed(Input.Keys.SPACE) ){
+                if (isOnGround()) {
+                    //start a 0.5s timer, then return false
+                    aniIndex = 0;
+                    state = "rightJump";
+                    aniTick++;
+                    if (aniTick >= 10) {
+                        aniTick = 0;
+                        aniIndex++;
+                        if (aniIndex >= 10) {
+                            aniIndex = 0;
+                        }
+                    }
+
+                    groundContacts = 0;
+                    jumpCount = 1;
+                    float force = body.getMass()*10;
+                    body.setLinearVelocity(body.getLinearVelocity().x, 0);
+                    body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
+                    jumpCount++;
+
+                    // Reset the jump timer
+                    jumpTimer = 0;
+                }
+            }
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
-                state = "run";
+                state = "runRight";
                 if (aniIndex >= 3) {
                     aniIndex = 0;
                 }
@@ -225,11 +250,50 @@ public class Player extends GameEntity {
                 velX = 1;
             }
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))
-            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
-                velX = (float)-1.5;
-            else
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+            if(Gdx.input.isKeyPressed(Input.Keys.SPACE) ){
+                if (isOnGround()) {
+                    //start a 0.5s timer, then return false
+                    aniIndex = 0;
+                    state = "leftJump";
+                    aniTick++;
+                    if (aniTick >= 10) {
+                        aniTick = 0;
+                        aniIndex++;
+                        if (aniIndex >= 10) {
+                            aniIndex = 0;
+                        }
+                    }
+
+                    groundContacts = 0;
+                    jumpCount = 1;
+                    float force = body.getMass()*10;
+                    body.setLinearVelocity(body.getLinearVelocity().x, 0);
+                    body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
+                    jumpCount++;
+
+                    // Reset the jump timer
+                    jumpTimer = 0;
+                }
+            }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+                state = "runLeft";
+                velX = (float) -1.5;
+                if (aniIndex >= 3) {
+                    aniIndex = 0;
+                }
+                aniTick++;
+                if (aniTick >= aniSpeed) {
+                    aniTick = 0;
+                    aniIndex++;
+                    if (aniIndex >= 3) {
+                        aniIndex = 0;
+                    }
+                }
+            } else
                 velX = -1;
+        }
 
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y);
 
@@ -239,13 +303,24 @@ public class Player extends GameEntity {
         // Check if the space key is pressed, the player is on the ground, and at least 1 second has passed since the last jump
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE) ){
             if(contactListener.isTouchingVerticalWall() && contactListener.checkContact() && !contactListener.isPlayerAboveGround()) {
-                //start a 0.5s timer, then return false
-                return;
+
 
 
             }
 
             if (isOnGround()) {
+                //start a 0.5s timer, then return false
+                aniIndex = 0;
+                state = "rightJump";
+                aniTick++;
+                if (aniTick >= 10) {
+                    aniTick = 0;
+                    aniIndex++;
+                    if (aniIndex >= 10) {
+                        aniIndex = 0;
+                    }
+                }
+
                 groundContacts = 0;
                 jumpCount = 1;
                 float force = body.getMass()*10;

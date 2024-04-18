@@ -13,12 +13,16 @@ import java.io.IOException;
 public class AnimationLoader {
 
     private AnimationLoader animationLoader;
-    private BufferedImage[] runAnimation;
-    private Sprite[] runSprites;
+    private BufferedImage[] runRightAnimation;
+    private Sprite[] runRightSprites;
+    private BufferedImage[] runLeftAnimation;
+    private Sprite[] runLeftSprites;
     private BufferedImage[] idleAnimation;
     private Sprite[] idleSprites;
-    private BufferedImage[] jumpAnimation;
-    private Sprite[] jumpSprites;
+    private BufferedImage[] leftJumpAnimation;
+    private Sprite[] leftJumpSprites;
+    private BufferedImage[] rightJumpAnimation;
+    private Sprite[] rightJumpSprites;
     private BufferedImage[] fallAnimation;
     private Sprite[] fallSprites;
     private BufferedImage[] rightAnimation;
@@ -29,21 +33,35 @@ public class AnimationLoader {
     private Sprite[] climbSprites;
 
     public AnimationLoader() {
-        runAnimation = loadAnimation("run");
+        runRightAnimation = loadAnimation("runRight");
         idleAnimation = loadAnimation("idle");
-        runSprites = new Sprite[runAnimation.length];
-        for (int i = 0; i < runAnimation.length; i++) {
-            runSprites[i] = new Sprite(bufferedImageToTexture(runAnimation[i]));
+        runRightSprites = new Sprite[runRightAnimation.length];
+        for (int i = 0; i < runRightAnimation.length; i++) {
+            runRightSprites[i] = new Sprite(bufferedImageToTexture(runRightAnimation[i]));
         }
+
+        runLeftAnimation = loadAnimation("runLeft");
+        runLeftSprites = new Sprite[runLeftAnimation.length];
+        for (int i = 0; i < runLeftAnimation.length; i++) {
+            runLeftSprites[i] = new Sprite(bufferedImageToTexture(runLeftAnimation[i]));
+        }
+
         idleSprites = new Sprite[idleAnimation.length];
         for (int i = 0; i < idleAnimation.length; i++) {
             idleSprites[i] = new Sprite(bufferedImageToTexture(idleAnimation[i]));
         }
-        /*jumpAnimation = loadAnimation("jump");
-        jumpSprites = new Sprite[jumpAnimation.length];
-        for (int i = 0; i < jumpAnimation.length; i++) {
-            jumpSprites[i] = new Sprite(bufferedImageToTexture(jumpAnimation[i]));
+        leftJumpAnimation = loadAnimation("leftJump");
+        leftJumpSprites = new Sprite[leftJumpAnimation.length];
+        for (int i = 0; i < leftJumpAnimation.length; i++) {
+            leftJumpSprites[i] = new Sprite(bufferedImageToTexture(leftJumpAnimation[i]));
         }
+        rightJumpAnimation = loadAnimation("rightJump");
+        rightJumpSprites = new Sprite[rightJumpAnimation.length];
+        for (int i = 0; i < rightJumpAnimation.length; i++) {
+            rightJumpSprites[i] = new Sprite(bufferedImageToTexture(rightJumpAnimation[i]));
+        }
+
+        /*
         fallAnimation = loadAnimation("fall");
         fallSprites = new Sprite[fallAnimation.length];
         for (int i = 0; i < fallAnimation.length; i++) {
@@ -71,18 +89,35 @@ public class AnimationLoader {
     public BufferedImage[] loadAnimation(String anim) {
 
         switch (anim) {
-            case "run":
-                runAnimation = new BufferedImage[Constants.PLAYER_RUN_LENGHT];
-                for (int i = 0; i < runAnimation.length; i++) {
-                    runAnimation[i] = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_RUN).getSubimage(i * 12, 0, 12, 17);
+            case "runRight":
+                runRightAnimation = new BufferedImage[Constants.PLAYER_RUN_LENGHT];
+                for (int i = 0; i < runRightAnimation.length; i++) {
+                    runRightAnimation[i] = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_RUN_RIGHT).getSubimage(i * 12, 0, 12, 17);
                 }
-                return runAnimation;
+                return runRightAnimation;
+            case "runLeft":
+                runLeftAnimation = new BufferedImage[Constants.PLAYER_RUN_LENGHT];
+                for (int i = 0; i < runLeftAnimation.length; i++) {
+                    runLeftAnimation[i] = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_RUN_LEFT).getSubimage(i * 12, 0, 12, 17);
+                }
+                return runLeftAnimation;
+
             case "idle":
                 idleAnimation = new BufferedImage[Constants.PLAYER_IDLE_LENGHT];
                 for (int i = 0; i < idleAnimation.length; i++) {
                     idleAnimation[i] = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_IDLE).getSubimage(i * 12, 0, 12, 17);
                 }
                 return idleAnimation;
+            case "leftJump":
+                leftJumpAnimation = new BufferedImage[10];
+                for(int i = 0; i < 10; i++)
+                    leftJumpAnimation[i] = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_LEFT_JUMP).getSubimage(0, 0, 12, 17);
+                return leftJumpAnimation;
+            case "rightJump":
+                rightJumpAnimation = new BufferedImage[10];
+                for(int i = 0; i < 10; i++)
+                    rightJumpAnimation[i] = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_RIGHT_JUMP).getSubimage(0, 0, 12, 17);
+                return rightJumpAnimation;
 
         }
         return null;
@@ -90,12 +125,16 @@ public class AnimationLoader {
 
     public Sprite[] getAnimation(String state) {
         switch(state) {
-            case "run":
-                return runSprites;
+            case "runRight":
+                return runRightSprites;
+            case "runLeft":
+                return runLeftSprites;
             case "idle":
                 return idleSprites;
-            case "jump":
-                return jumpSprites;
+            case "leftJump":
+                return leftJumpSprites;
+            case "rightJump":
+                return rightJumpSprites;
             case "fall":
                 return fallSprites;
             case "right":
