@@ -6,8 +6,7 @@ import com.badlogic.gdx.physics.box2d.joints.WeldJoint;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.mbl.pinoscastle.screens.GameScreen;
-import jdk.jfr.internal.LogLevel;
-import jdk.jfr.internal.LogTag;
+
 import objects.player.Player;
 
 import java.util.logging.Logger;
@@ -205,9 +204,13 @@ public class PlayerContactListener implements ContactListener {
         Fixture secondFixture = fixtureA.getUserData() != null && fixtureA.getUserData().equals("player") ? fixtureB : fixtureB.getUserData() != null && fixtureB.getUserData().equals("player") ? fixtureA : null;
 
         if (fixtureA.getUserData() != null && fixtureB.getUserData() != null && playerFixture != null && secondFixture != null) {
-            if(playerFixture.getBody().getPosition().y > secondFixture.getBody().getPosition().y) {
-                player.hitGround();
-            }
+
+
+
+                if(playerFixture.getBody().getPosition().y > secondFixture.getBody().getPosition().y) {
+                    player.hitGround();
+                }
+
 
             Body playerBody = fixtureA.getUserData().toString().equals("player") ? fixtureA.getBody() : fixtureB.getBody();
 

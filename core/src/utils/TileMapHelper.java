@@ -37,6 +37,7 @@ public class TileMapHelper {
         parseMapObjects(map.getLayers().get("Objects").getObjects());
         parseTileCollisions();
         return new OrthogonalTiledMapRenderer(map);
+
     }
 
     public void resetMap(Map map) {
@@ -48,7 +49,6 @@ public class TileMapHelper {
             gameScreen.getWorld().destroyBody(body);
         }
 
-        //recreate player body
     }
 
 
@@ -83,6 +83,7 @@ public class TileMapHelper {
                             gameScreen.getWorld()
                     );
                     body.createFixture(shape, 1000).setUserData("player");
+                    gameScreen.removePlayer();
                     gameScreen.setPlayer(new Player(rectangle.getWidth(), rectangle.getHeight(), body, map, gameScreen, (RectangleMapObject) mapObject, gameScreen.getWorld()));
                 }
             }

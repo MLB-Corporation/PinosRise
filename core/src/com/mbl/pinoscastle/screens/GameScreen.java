@@ -33,8 +33,8 @@ public class GameScreen extends ScreenAdapter {
     private SpriteBatch batch;
     private World world;
 
-    public int cameraWidth = 400;
-    public int cameraHeight = 400;
+    public int cameraWidth = 640;
+    public int cameraHeight = 640;
 
     private Box2DDebugRenderer debugRenderer;
 
@@ -196,5 +196,9 @@ public class GameScreen extends ScreenAdapter {
 
     public void resetRenderer(TiledMap newMap) {
         this.renderer = new OrthogonalTiledMapRenderer(newMap);
+    }
+
+    public void removePlayer() {
+        this.player = null;
     }
 }
