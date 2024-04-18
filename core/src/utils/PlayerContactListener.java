@@ -211,6 +211,7 @@ public class PlayerContactListener implements ContactListener {
                     player.hitGround();
                 }
 
+
             Body playerBody = fixtureA.getUserData().toString().equals("player") ? fixtureA.getBody() : fixtureB.getBody();
 
             Fixture platformFixture = fixtureA.getUserData().toString().equals("player") ? fixtureB : fixtureA;

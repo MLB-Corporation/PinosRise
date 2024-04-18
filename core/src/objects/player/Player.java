@@ -121,9 +121,10 @@ public class Player extends GameEntity {
         this.world = world;
         this.pixmap = new Pixmap(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Pixmap.Format.RGBA8888);
         darkness = new Texture(pixmap);
-        this.body.setTransform(5, 1, 0);
+
 
         this.animationLoader = new AnimationLoader();
+
 
 
         state = "idle";

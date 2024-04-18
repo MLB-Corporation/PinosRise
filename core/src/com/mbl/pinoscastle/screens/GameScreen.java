@@ -92,11 +92,11 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
         renderer.setView(camera);
         player.update();
-        /*for(MovingPlatform plat : movingPlatforms) {
+        for(MovingPlatform plat : movingPlatforms) {
             plat.update(delta);
             player.update();
 
-        }*/
+        }
 
 
         if (contactListener.getPlatform() != null && contactListener.getPlatform().getPosition().y < player.getBody().getPosition().y) {
