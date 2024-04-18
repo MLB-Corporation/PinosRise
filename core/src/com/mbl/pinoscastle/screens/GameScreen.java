@@ -61,7 +61,7 @@ public class GameScreen extends ScreenAdapter {
         this.batch = new SpriteBatch();
         this.world = new World(new Vector2(0, -25f), false);
         this.tileMapHelper = new TileMapHelper(this);
-        this.renderer = tileMapHelper.setupMap("maps/newMap.tmx");
+        this.renderer = tileMapHelper.setupMap("maps/livelloPrincipale.tmx");
         this.contactListener = new PlayerContactListener(player, world, this); // Modify this line
         this.parent = parent;
 
@@ -92,11 +92,11 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
         renderer.setView(camera);
         player.update();
-        /*for(MovingPlatform plat : movingPlatforms) {
+        for(MovingPlatform plat : movingPlatforms) {
             plat.update(delta);
             player.update();
 
-        }*/
+        }
 
 
         if (contactListener.getPlatform() != null && contactListener.getPlatform().getPosition().y < player.getBody().getPosition().y) {
