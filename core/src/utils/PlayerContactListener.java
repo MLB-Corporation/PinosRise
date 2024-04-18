@@ -6,8 +6,7 @@ import com.badlogic.gdx.physics.box2d.joints.WeldJoint;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.mbl.pinoscastle.screens.GameScreen;
-import jdk.jfr.internal.LogLevel;
-import jdk.jfr.internal.LogTag;
+
 import objects.player.Player;
 
 import java.util.logging.Logger;
@@ -207,18 +206,7 @@ public class PlayerContactListener implements ContactListener {
         if (fixtureA.getUserData() != null && fixtureB.getUserData() != null && playerFixture != null && secondFixture != null) {
 
 
-            if(isTouchingVerticalWall() && checkContact() && !isPlayerAboveGround()) {
-                //start a 0.5s timer, then return false
-                Body body = player.getBody();
-                float force = body.getMass()*10;
 
-                body.setLinearVelocity(body.getLinearVelocity().x, 0);
-                body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
-                body.applyLinearImpulse(new Vector2(0, -force), body.getPosition(), true);
-
-
-
-            }
                 if(playerFixture.getBody().getPosition().y > secondFixture.getBody().getPosition().y) {
                     player.hitGround();
                 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -20,10 +21,16 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.mbl.pinoscastle.screens.GameScreen;
 import com.badlogic.gdx.utils.Timer;
-import utils.PlayerContactListener;
-import utils.TileMapHelper;
+import utils.*;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import static utils.Constants.PPM;
 
@@ -45,9 +52,13 @@ public class Player extends GameEntity {
         }
     }
 
+
+
     public boolean isOnGround() {
         return this.groundContacts > 0;
     }
+
+    private BufferedImage[] run;
 
     private GameScreen gameScreen;
 
@@ -69,16 +80,39 @@ public class Player extends GameEntity {
 
     Pixmap pixmap;
     Texture darkness;
+    private int aniTick, aniIndex, aniSpeed = 5;
+
+    //ANIMATIONS
+    private AnimationLoader animationLoader;
+    private BufferedImage[] runAnimation;
+    private Sprite[] runSprites;
+    private BufferedImage[] idleAnimation;
+    private Sprite[] idleSprites;
+    private BufferedImage[] jumpAnimation;
+    private Sprite[] jumpSprites;
+    private BufferedImage[] fallAnimation;
+    private Sprite[] fallSprites;
+    private BufferedImage[] rightAnimation;
+    private Sprite[] rightSprites;
+    private BufferedImage[] leftAnimation;
+    private Sprite[] leftSprites;
+    private BufferedImage[] climbAnimation;
+    private Sprite[] climbSprites;
+
+    private String state;
+
 
 
     public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen, RectangleMapObject mapObject, World world) {
         super(width, height, body);
+
         this.tileMapHelper = new TileMapHelper(gameScreen);
         this.speed = 2.5f;
         this.jumpCount = 0;
         this.rect = mapObject.getRectangle();
         this.tiledMap = tiledMap; // Initialize the TiledMap
         this.gameScreen = gameScreen;
+
         this.texture = new Texture(Gdx.files.internal("player/player.png"));
         this.sprite = new Sprite(texture);
         this.sprite.setSize(width / PPM, height / PPM);
@@ -87,9 +121,18 @@ public class Player extends GameEntity {
         this.world = world;
         this.pixmap = new Pixmap(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Pixmap.Format.RGBA8888);
         darkness = new Texture(pixmap);
+        this.body.setTransform(5, 1, 0);
 
+        this.animationLoader = new AnimationLoader();
+
+
+        state = "idle";
 
     }
+
+
+
+
 
     @Override
     public void update() {
@@ -100,7 +143,10 @@ public class Player extends GameEntity {
         sprite.setPosition(x - sprite.getWidth() / 2, y - sprite.getHeight() / 2);
         checkTeleport();
         checkClimbable();
+
     }
+
+
 
     private void checkClimbable() {
         Vector2 playerPosition = new Vector2(body.getPosition().x, body.getPosition().y);
@@ -127,9 +173,13 @@ public class Player extends GameEntity {
         float widthInPixels = rect.width;
         float heightInPixels = rect.height;
         Sprite sprite = new Sprite(texture);
-        sprite.setPosition(body.getPosition().x*PPM-widthInPixels/2, body.getPosition().y*PPM-heightInPixels/2);
-        sprite.draw(batch);
+        //sprite.setPosition(body.getPosition().x*PPM-widthInPixels/2, body.getPosition().y*PPM-heightInPixels/2);
+        //sprite.draw(batch);
         batch.draw(darkness, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Sprite[] animation = animationLoader.getAnimation(state);
+        animation[aniIndex].setPosition(body.getPosition().x * PPM - sprite.getWidth() / 2, body.getPosition().y * PPM - sprite.getHeight() / 2);
+        animation[aniIndex].draw(batch);
+
     }
 
 
@@ -141,9 +191,33 @@ public class Player extends GameEntity {
             jumpCooldown -= Gdx.graphics.getDeltaTime();
         }
 
+        if(!Gdx.input.isKeyPressed(Input.Keys.RIGHT) && !Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)){
+            state = "idle";
+            aniTick++;
+            if (aniTick >= 10) {
+                aniTick = 0;
+                aniIndex++;
+                if (aniIndex >= 10) {
+                    aniIndex = 0;
+                }
+            }
+        }
+
         velX = 0;
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+                state = "run";
+                if (aniIndex >= 3) {
+                    aniIndex = 0;
+                }
+                aniTick++;
+                if (aniTick >= aniSpeed) {
+                    aniTick = 0;
+                    aniIndex++;
+                    if (aniIndex >= 3) {
+                        aniIndex = 0;
+                    }
+                }
                 velX = (float) 1.5;
             }
 
@@ -227,6 +301,7 @@ public class Player extends GameEntity {
 
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y < 7 ? body.getLinearVelocity().y : 7);
     }
+
 
     private void checkTeleport() {
 
@@ -350,11 +425,17 @@ public class Player extends GameEntity {
     }
 
     private void teleportToDestination(MapObjects objects, String destinationName) {
+
+
+        System.out.println("Body: " + body.getUserData());
+
+
         for (MapObject destinationObject : objects) {
             if (destinationName.equals(destinationObject.getName())) {
                 if (destinationObject instanceof RectangleMapObject) {
                     Rectangle destinationRect = ((RectangleMapObject) destinationObject).getRectangle();
                     Vector2 destination = new Vector2(destinationRect.x + destinationRect.width / 2, destinationRect.y + destinationRect.height / 2);
+                    System.out.println("Body: " + body);
                     body.setTransform(destination.scl(1 / PPM), body.getAngle()); // Ensure to keep the player's current angle
                     return; // Exit after teleporting
                 }

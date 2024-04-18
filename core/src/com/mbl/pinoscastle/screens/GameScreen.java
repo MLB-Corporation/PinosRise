@@ -33,8 +33,8 @@ public class GameScreen extends ScreenAdapter {
     private SpriteBatch batch;
     private World world;
 
-    public int cameraWidth = 400;
-    public int cameraHeight = 400;
+    public int cameraWidth = 640;
+    public int cameraHeight = 640;
 
     private Box2DDebugRenderer debugRenderer;
 
@@ -61,7 +61,7 @@ public class GameScreen extends ScreenAdapter {
         this.batch = new SpriteBatch();
         this.world = new World(new Vector2(0, -25f), false);
         this.tileMapHelper = new TileMapHelper(this);
-        this.renderer = tileMapHelper.setupMap("maps/newMap.tmx");
+        this.renderer = tileMapHelper.setupMap("maps/livelloPrincipale.tmx");
         this.contactListener = new PlayerContactListener(player, world, this); // Modify this line
         this.parent = parent;
 
@@ -196,5 +196,9 @@ public class GameScreen extends ScreenAdapter {
 
     public void resetRenderer(TiledMap newMap) {
         this.renderer = new OrthogonalTiledMapRenderer(newMap);
+    }
+
+    public void removePlayer() {
+        this.player = null;
     }
 }

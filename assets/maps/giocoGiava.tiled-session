@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "newMap.tmx",
+    "activeFile": "finn2.tsx",
     "expandedProjectPaths": [
         "."
     ],
@@ -22,53 +22,7 @@
         "C:/Users/4binfo/AppData/Local/Temp/e29573fc-97c3-4ce1-ab08-443f383739df_adve.zip.9df/adve/tiles.tsx": {
             "scaleInDock": 1
         },
-        "C:/Users/Pietro/Downloads/Dungeon.tsx": {
-            "scaleInDock": 1
-        },
-        "C:/Users/Pietro/Downloads/esterni.tsx": {
-            "scaleInDock": 1
-        },
-        "C:/Users/Pietro/Downloads/liane8bit.tsx": {
-            "scaleInDock": 1
-        },
-        "C:/Users/Pietro/Downloads/luna.tsx": {
-            "scaleInDock": 1
-        },
-        "C:/Users/Pietro/Downloads/mappaNuova.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 0,
-            "viewCenter": {
-                "x": 192,
-                "y": 67.33333333333331
-            }
-        },
-        "C:/Users/Pietro/Downloads/maps/maps/Dungeon.tsx": {
-            "scaleInDock": 1
-        },
-        "C:/Users/Pietro/Downloads/maps/maps/esterni.tsx": {
-            "scaleInDock": 1
-        },
-        "C:/Users/Pietro/Downloads/maps/maps/liane8bit.tsx": {
-            "scaleInDock": 1
-        },
-        "C:/Users/Pietro/Downloads/maps/maps/newMap.tmx": {
-            "scale": 2,
-            "selectedLayer": 4,
-            "viewCenter": {
-                "x": -499,
-                "y": 260.5
-            }
-        },
-        "C:/Users/Pietro/Downloads/maps/maps/tubi.tsx": {
-            "scaleInDock": 1
-        },
         "C:/Users/Pietro/Downloads/pinoscastle-20240208T144029Z-001/pinoscastle/assets/maps/tubi.tsx": {
-            "scaleInDock": 1
-        },
-        "C:/Users/Pietro/Downloads/tiles.tsx": {
-            "scaleInDock": 1
-        },
-        "C:/Users/Pietro/Downloads/tubi.tsx": {
             "scaleInDock": 1
         },
         "Dungeon.tsx": {
@@ -103,33 +57,30 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 0.5,
-            "selectedLayer": 7,
+            "scale": 3,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 625,
-                "y": 4422
+                "x": 172.83333333333334,
+                "y": 4719.833333333333
             }
         },
         "mappa.tmx": {
             "expandedGroupLayers": [
                 4
             ],
-            "expandedObjectLayers": [
-                15
-            ],
-            "scale": 0.5,
-            "selectedLayer": 13,
+            "scale": 3,
+            "selectedLayer": 12,
             "viewCenter": {
-                "x": 1196,
-                "y": 2391
+                "x": 1198.1666666666665,
+                "y": 2394.1666666666665
             }
         },
         "mappa2.tmx": {
             "scale": 0.79265625,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 956.2783362901637,
-                "y": 636.467573427952
+                "x": 1075.497733096787,
+                "y": 654.1297062881924
             }
         },
         "newMap.tmx": {
@@ -139,8 +90,8 @@
             "scale": 0.25,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1122,
-                "y": 6000
+                "x": 142,
+                "y": 6070
             }
         },
         "tile test.tsx": {
@@ -176,16 +127,10 @@
         "Dungeon.tsx",
         "esterni.tsx",
         "finn.tsx",
-        "finn2.tsx",
-        "mappa.tmx",
-        "C:/Users/Pietro/Downloads/mappaNuova.tmx",
-        "livelloPrincipale.tmx",
-        "newMap.tmx"
+        "finn2.tsx"
     ],
     "project": "giocoGiava.tiled-project",
     "recentFiles": [
-        "livelloPrincipale.tmx",
-        "newMap.tmx",
         "tubi.tsx",
         "liane.tsx",
         "liane8bit.tsx",
@@ -195,7 +140,9 @@
         "catenevolandiecc.tsx",
         "Dungeon.tsx",
         "esterni.tsx",
-        "finn.tsx"
+        "finn.tsx",
+        "finn2.tsx",
+        "mappa.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
