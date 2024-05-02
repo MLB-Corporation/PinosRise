@@ -61,7 +61,7 @@ public class GameScreen extends ScreenAdapter {
         this.batch = new SpriteBatch();
         this.world = new World(new Vector2(0, -25f), false);
         this.tileMapHelper = new TileMapHelper(this);
-        this.renderer = tileMapHelper.setupMap("maps/livelloPrincipale.tmx");
+        this.renderer = tileMapHelper.setupMap("maps/map.tmx");
         this.contactListener = new PlayerContactListener(player, world, this); // Modify this line
         this.parent = parent;
 

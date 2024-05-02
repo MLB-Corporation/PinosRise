@@ -37,21 +37,14 @@ public class TileMapHelper {
         parseMapObjects(map.getLayers().get("Objects").getObjects());
         parseTileCollisions();
         return new OrthogonalTiledMapRenderer(map);
-
     }
 
     public void resetMap(Map map) {
         gameScreen.getWorld().getBodies(bodies);
-
-
-
         for (Body body : bodies) {
             gameScreen.getWorld().destroyBody(body);
         }
-
     }
-
-
 
     private void parseMapObjects(MapObjects objects){
         for(MapObject mapObject : objects) {
@@ -89,10 +82,6 @@ public class TileMapHelper {
             }
         }
     }
-
-
-
-
 
     private void parseTileCollisions() {
         for (MapLayer layer : map.getLayers()) {
@@ -142,10 +131,6 @@ public class TileMapHelper {
             }
         }
     }
-
-
-
-
 
     private void createStaticBodyForTile(float startPosition, float orthogonalPosition, float length, float thickness, boolean isHorizontal, boolean isOneWay, boolean isSlide, boolean isVerticalWall) {
         BodyDef bodyDef = new BodyDef();
