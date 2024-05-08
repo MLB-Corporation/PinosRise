@@ -29,6 +29,7 @@ import static utils.Constants.PPM;
 
 public class GameScreen extends ScreenAdapter {
 
+    // camera
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private World world;

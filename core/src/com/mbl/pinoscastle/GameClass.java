@@ -49,6 +49,7 @@ public class GameClass extends Game {
 
 
 
+
     @Override
     public void create () {
         this.widthScreen = Gdx.graphics.getWidth();
