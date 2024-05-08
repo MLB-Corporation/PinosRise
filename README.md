@@ -14,6 +14,8 @@ Pino's castle / Pino's rise game
 
 `Ladders:` https://youtu.be/cHn7mjAChus
 
+`First Animations:` https://youtu.be/-9fyfizZ5ps
+
 
 ## Authors
 

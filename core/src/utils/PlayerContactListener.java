@@ -6,8 +6,7 @@ import com.badlogic.gdx.physics.box2d.joints.WeldJoint;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.mbl.pinoscastle.screens.GameScreen;
-import jdk.jfr.internal.LogLevel;
-import jdk.jfr.internal.LogTag;
+
 import objects.player.Player;
 
 import java.util.logging.Logger;
@@ -25,13 +24,9 @@ public class PlayerContactListener implements ContactListener {
 
     public boolean onGround = true;
 
-
-
     public boolean getOnGround() {
         return onGround;
     }
-
-
 
     GameScreen gscreen;
 
@@ -39,7 +34,6 @@ public class PlayerContactListener implements ContactListener {
         this.player = player;
         this.world = world;
         this.gscreen = gclass;
-
     }
 
     public boolean checkContact() {
@@ -85,7 +79,6 @@ public class PlayerContactListener implements ContactListener {
                         } else {
                             return false;
                         }
-
                 }
             }
         }
@@ -154,11 +147,7 @@ public class PlayerContactListener implements ContactListener {
                 // Store a reference to the platform's Body
                 platform = fixtureA.getUserData().toString().contains("moving") ? fixtureA.getBody() : fixtureB.getBody();
             }
-
-
         }
-
-
     }
 
     public Body getPlatform() {
@@ -189,40 +178,22 @@ public class PlayerContactListener implements ContactListener {
                 platform = null;
             }
         }
-
     }
-    }
+}
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-
-
         // Determine which fixture is the player and which is the platform
         Fixture playerFixture = fixtureA.getUserData() != null && fixtureA.getUserData().equals("player") ? fixtureA : fixtureB.getUserData() != null && fixtureB.getUserData().equals("player") ? fixtureB : null;
         Fixture secondFixture = fixtureA.getUserData() != null && fixtureA.getUserData().equals("player") ? fixtureB : fixtureB.getUserData() != null && fixtureB.getUserData().equals("player") ? fixtureA : null;
 
         if (fixtureA.getUserData() != null && fixtureB.getUserData() != null && playerFixture != null && secondFixture != null) {
-
-
-            if(isTouchingVerticalWall() && checkContact() && !isPlayerAboveGround()) {
-                //start a 0.5s timer, then return false
-                Body body = player.getBody();
-                float force = body.getMass()*10;
-
-                body.setLinearVelocity(body.getLinearVelocity().x, 0);
-                body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
-                body.applyLinearImpulse(new Vector2(0, -force), body.getPosition(), true);
-
-
-
-            }
                 if(playerFixture.getBody().getPosition().y > secondFixture.getBody().getPosition().y) {
                     player.hitGround();
                 }
-
             Body playerBody = fixtureA.getUserData().toString().equals("player") ? fixtureA.getBody() : fixtureB.getBody();
 
             Fixture platformFixture = fixtureA.getUserData().toString().equals("player") ? fixtureB : fixtureA;
@@ -235,17 +206,9 @@ public class PlayerContactListener implements ContactListener {
                         platformFixture.setSensor(false);
                     }
                 }, 0.3f);
-
-
-
-
-
             }
         }
     }
-
-
-
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
@@ -260,6 +223,4 @@ public class PlayerContactListener implements ContactListener {
 
         return (aIsOneWay && bIsPlayer) || (bIsOneWay && aIsPlayer);
     }
-
-
 }

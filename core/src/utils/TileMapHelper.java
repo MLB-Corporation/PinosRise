@@ -41,17 +41,10 @@ public class TileMapHelper {
 
     public void resetMap(Map map) {
         gameScreen.getWorld().getBodies(bodies);
-
-
-
         for (Body body : bodies) {
             gameScreen.getWorld().destroyBody(body);
         }
-
-        //recreate player body
     }
-
-
 
     private void parseMapObjects(MapObjects objects){
         for(MapObject mapObject : objects) {
@@ -83,15 +76,12 @@ public class TileMapHelper {
                             gameScreen.getWorld()
                     );
                     body.createFixture(shape, 1000).setUserData("player");
+                    gameScreen.removePlayer();
                     gameScreen.setPlayer(new Player(rectangle.getWidth(), rectangle.getHeight(), body, map, gameScreen, (RectangleMapObject) mapObject, gameScreen.getWorld()));
                 }
             }
         }
     }
-
-
-
-
 
     private void parseTileCollisions() {
         for (MapLayer layer : map.getLayers()) {
@@ -141,10 +131,6 @@ public class TileMapHelper {
             }
         }
     }
-
-
-
-
 
     private void createStaticBodyForTile(float startPosition, float orthogonalPosition, float length, float thickness, boolean isHorizontal, boolean isOneWay, boolean isSlide, boolean isVerticalWall) {
         BodyDef bodyDef = new BodyDef();
