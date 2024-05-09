@@ -9,7 +9,8 @@ import com.mbl.pinoscastle.GameClass;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setIdleFPS(600);
+		config.setForegroundFPS(60);
+		config.setIdleFPS(60);
 		config.useVsync(true);
 		config.setWindowedMode(900, 600);
 		config.setTitle("GiocoGiava");

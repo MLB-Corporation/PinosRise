@@ -85,6 +85,7 @@ public class GameScreen extends ScreenAdapter {
 
 
     private void update(float delta) {
+
         world.step(1/60f, 6, 2);
         postStepActions.forEach(Runnable::run);
         postStepActions.clear();
