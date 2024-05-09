@@ -160,7 +160,8 @@ public class GameScreen extends ScreenAdapter {
         }
 
         batch.end();
-        //debugRenderer.render(world, camera.combined.scl(PPM));
+        //
+        debugRenderer.render(world, camera.combined.scl(PPM));
     }
 
     public void setCameraWidth(int cameraWidth) {
