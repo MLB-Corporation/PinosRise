@@ -402,12 +402,12 @@ public class Player extends GameEntity {
                         teleportToDestination(objectsCopy1, objectName.replace("D", "C"));
                     } else if (objectName.equals("door") && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                         // load the new map when the player press E on the object named "porta"
-                        TiledMap newMap = new TmxMapLoader().load("maps/livelloPrincipale.tmx");
+                        TiledMap newMap = new TmxMapLoader().load("maps/map.tmx");
                         this.setPosition(new Vector2(0, 0)); // Imposta la posizione del giocatore
                         tileMapHelper.resetMap(newMap);
                         // Imposta la nuova mappa nella classe GameScreen
                         gameScreen.setTiledMap(newMap);
-                        tileMapHelper.setupMap("maps/livelloPrincipale.tmx");
+                        tileMapHelper.setupMap("maps/map.tmx");
                         // Spawn the player in front of the object "spawn"
                         teleportToDestination(newMap.getLayers().get("Objects").getObjects(), "spawn");
 

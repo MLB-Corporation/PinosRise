@@ -6,8 +6,11 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -15,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.mbl.pinoscastle.GameClass;
+import gameStates.GameState;
 import objects.obstacles.MovableBox;
 import objects.obstacles.MovingPlatform;
 import objects.player.Player;
@@ -63,12 +67,11 @@ public class GameScreen extends ScreenAdapter {
         this.world = new World(new Vector2(0, -25f), false);
         this.tileMapHelper = new TileMapHelper(this);
         this.renderer = tileMapHelper.setupMap("maps/map.tmx");
-        this.contactListener = new PlayerContactListener(player, world, this); // Modify this line
+        this.contactListener = new PlayerContactListener(player, world, this);
         this.parent = parent;
 
         this.debugRenderer = new Box2DDebugRenderer();
-        world.setContactListener(contactListener); // Modify this line
-
+        world.setContactListener(contactListener);
     }
 
     public void setContactListener(PlayerContactListener contactListener) {
@@ -94,10 +97,10 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
         renderer.setView(camera);
         player.update();
+
         for(MovingPlatform plat : movingPlatforms) {
             plat.update(delta);
             player.update();
-
         }
 
 
@@ -108,7 +111,7 @@ public class GameScreen extends ScreenAdapter {
             player.getBody().setLinearVelocity(playerVelocity.x + platformVelocity.x, playerVelocity.y + platformVelocity.y);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
-            Gdx.app.exit();
+            GameClass.INSTANCE.changeScreen(GameClass.MENU);
         }
     }
 
@@ -160,8 +163,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
         batch.end();
-        //
-        debugRenderer.render(world, camera.combined.scl(PPM));
+        //debugRenderer.render(world, camera.combined.scl(PPM));
     }
 
     public void setCameraWidth(int cameraWidth) {
@@ -188,6 +190,7 @@ public class GameScreen extends ScreenAdapter {
 
     public void setPlayer(Player player){
         this.player = player;
+        teleportToSpawn();
     }
 
     public void setTiledMap(TiledMap newMap) {
@@ -197,8 +200,8 @@ public class GameScreen extends ScreenAdapter {
         camera.update();
     }
 
-    public void resetRenderer(TiledMap newMap) {
-        this.renderer = new OrthogonalTiledMapRenderer(newMap);
+    public void teleportToSpawn() {
+        this.player.getBody().setTransform(5.3f, 1, 0);
     }
 
     public void removePlayer() {

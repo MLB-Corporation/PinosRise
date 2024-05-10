@@ -17,6 +17,7 @@ public class MenuScreen implements Screen {
 
     private GameClass parent;
     private Stage stage;
+    private boolean isPlaying;
 
     TextButton exit, newGame, preferences;
 
@@ -33,7 +34,7 @@ public class MenuScreen implements Screen {
         stage.addActor(table);
         Skin skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
 
-        newGame = new TextButton("New Game", skin);
+        newGame = new TextButton(isPlaying ? "Resume" : "New Game", skin);
         preferences = new TextButton("Preferences", skin);
         exit = new TextButton("Exit", skin);
 

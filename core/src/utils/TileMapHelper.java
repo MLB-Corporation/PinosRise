@@ -36,6 +36,7 @@ public class TileMapHelper {
         map = new TmxMapLoader().load(mappa);
         parseMapObjects(map.getLayers().get("Objects").getObjects());
         parseTileCollisions();
+        System.out.println("rend: " + new OrthogonalTiledMapRenderer(map).toString());
         return new OrthogonalTiledMapRenderer(map);
     }
 
