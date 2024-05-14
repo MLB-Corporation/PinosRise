@@ -84,20 +84,6 @@ public class Player extends GameEntity {
 
     //ANIMATIONS
     private AnimationLoader animationLoader;
-    private BufferedImage[] runAnimation;
-    private Sprite[] runSprites;
-    private BufferedImage[] idleAnimation;
-    private Sprite[] idleSprites;
-    private BufferedImage[] jumpAnimation;
-    private Sprite[] jumpSprites;
-    private BufferedImage[] fallAnimation;
-    private Sprite[] fallSprites;
-    private BufferedImage[] rightAnimation;
-    private Sprite[] rightSprites;
-    private BufferedImage[] leftAnimation;
-    private Sprite[] leftSprites;
-    private BufferedImage[] climbAnimation;
-    private Sprite[] climbSprites;
 
     private String state;
 
@@ -142,7 +128,6 @@ public class Player extends GameEntity {
 
         checkUserInput();
         sprite.setPosition(x - sprite.getWidth() / 2, y - sprite.getHeight() / 2);
-        checkTeleport();
         checkClimbable();
 
     }
@@ -204,33 +189,18 @@ public class Player extends GameEntity {
             }
         }
 
+
         velX = 0;
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
+            //salto in movimento verso destra
             if(Gdx.input.isKeyPressed(Input.Keys.SPACE) ){
-                if (isOnGround()) {
-                    //start a 0.5s timer, then return false
-                    aniIndex = 0;
-                    state = "rightJump";
-                    aniTick++;
-                    if (aniTick >= 10) {
-                        aniTick = 0;
-                        aniIndex++;
-                        if (aniIndex >= 10) {
-                            aniIndex = 0;
-                        }
-                    }
-
-                    groundContacts = 0;
-                    jumpCount = 1;
-                    float force = body.getMass()*10;
-                    body.setLinearVelocity(body.getLinearVelocity().x, 0);
-                    body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
-                    jumpCount++;
-
-                    // Reset the jump timer
-                    jumpTimer = 0;
+                if(contactListener.isTouchingVerticalWall() && !contactListener.checkContact() ) {
+                    return;
+                } else {
+                    rightjump();
                 }
             }
+            //corsa verso destra
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
                 state = "runRight";
                 if (aniIndex >= 3) {
@@ -253,28 +223,31 @@ public class Player extends GameEntity {
         }
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             if(Gdx.input.isKeyPressed(Input.Keys.SPACE) ){
-                if (isOnGround()) {
-                    //start a 0.5s timer, then return false
-                    aniIndex = 0;
-                    state = "leftJump";
-                    aniTick++;
-                    if (aniTick >= 10) {
-                        aniTick = 0;
-                        aniIndex++;
-                        if (aniIndex >= 10) {
-                            aniIndex = 0;
+                if(contactListener.isTouchingVerticalWall() && !contactListener.checkContact() ) {
+                    return;
+                } else {
+                    if(isOnGround()) {
+                        aniIndex = 0;
+                        state = "leftJump";
+                        aniTick++;
+                        if (aniTick >= 10) {
+                            aniTick = 0;
+                            aniIndex++;
+                            if (aniIndex >= 10) {
+                                aniIndex = 0;
+                            }
                         }
+
+                        groundContacts = 0;
+                        jumpCount = 1;
+                        float force = body.getMass() * 8;
+                        body.setLinearVelocity(body.getLinearVelocity().x, 0);
+                        body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
+                        jumpCount++;
+
+                        // Reset the jump timer
+                        jumpTimer = 0;
                     }
-
-                    groundContacts = 0;
-                    jumpCount = 1;
-                    float force = body.getMass()*10;
-                    body.setLinearVelocity(body.getLinearVelocity().x, 0);
-                    body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
-                    jumpCount++;
-
-                    // Reset the jump timer
-                    jumpTimer = 0;
                 }
             }
 
@@ -301,41 +274,18 @@ public class Player extends GameEntity {
         // Update the jump timer
         jumpTimer += Gdx.graphics.getDeltaTime();
 
-        // Check if the space key is pressed, the player is on the ground, and at least 1 second has passed since the last jump
+        //salto da fermo
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE) ){
-            if(contactListener.isTouchingVerticalWall() && contactListener.checkContact() && !contactListener.isPlayerAboveGround()) {
-
-
-
+            if(contactListener.isTouchingVerticalWall() && !contactListener.checkContact() ) {
+                return;
+            } else {
+                rightjump();
             }
 
-            if (isOnGround()) {
-                //start a 0.5s timer, then return false
-                aniIndex = 0;
-                state = "rightJump";
-                aniTick++;
-                if (aniTick >= 10) {
-                    aniTick = 0;
-                    aniIndex++;
-                    if (aniIndex >= 10) {
-                        aniIndex = 0;
-                    }
-                }
 
-                groundContacts = 0;
-                jumpCount = 1;
-                float force = body.getMass()*10;
-                body.setLinearVelocity(body.getLinearVelocity().x, 0);
-                body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
-                jumpCount++;
 
-                // Reset the jump timer
-                jumpTimer = 0;
-            }
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-            System.out.println("onGround? " + groundContacts);
-        }
+
 
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 
@@ -378,146 +328,35 @@ public class Player extends GameEntity {
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y < 7 ? body.getLinearVelocity().y : 7);
     }
 
-
-    private void checkTeleport() {
-
-        Vector2 playerPosition1 = new Vector2(body.getPosition().x, body.getPosition().y);
-        MapObjects objects1 = tiledMap.getLayers().get("Objects").getObjects(); // Access objects from the "Objects" layer
-
-        // Create a copy of objects for the second loop
-        MapObjects objectsCopy1 = new MapObjects();
-        for (MapObject object : objects1) {
-            objectsCopy1.add(object);
-        }
-
-        for (MapObject object : objects1) {
-            if (object instanceof RectangleMapObject) {
-                Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                String objectName = object.getName();
-                if (rect.contains(playerPosition1.x * PPM, body.getPosition().y * PPM)) {
-                    // Check if the current object is named "pipe_1C" or "pipe_1D"
-                    if (objectName.endsWith("C")) {
-                        teleportToDestination(objectsCopy1, objectName.replace("C", "D"));
-                    } else if (objectName.endsWith("D")) {
-                        teleportToDestination(objectsCopy1, objectName.replace("D", "C"));
-                    } else if (objectName.equals("door") && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-                        // load the new map when the player press E on the object named "porta"
-                        TiledMap newMap = new TmxMapLoader().load("maps/map.tmx");
-                        this.setPosition(new Vector2(0, 0)); // Imposta la posizione del giocatore
-                        tileMapHelper.resetMap(newMap);
-                        // Imposta la nuova mappa nella classe GameScreen
-                        gameScreen.setTiledMap(newMap);
-                        tileMapHelper.setupMap("maps/map.tmx");
-                        // Spawn the player in front of the object "spawn"
-                        teleportToDestination(newMap.getLayers().get("Objects").getObjects(), "spawn");
-
-                    } else if (objectName.equals("zoom")) {
-                        Timer.schedule(new Timer.Task() {
-                            int counter = 0; // Contatore per tracciare il numero di secondi trascorsi
-
-                            @Override
-                            public void run() {
-                                if (counter < 300) { // Se sono trascorsi meno di 10 secondi
-                                    gameScreen.setCameraWidth(gameScreen.cameraWidth - 1);
-                                    gameScreen.setCameraHeight(gameScreen.cameraHeight - 1);
-                                    counter++; // Incrementa il contatore
-                                } else {
-                                    this.cancel(); // Annulla il task se sono trascorsi 10 secondi
-                                }
-                            }
-                        }, 0, 0.001f);
-                    } else if (objectName.equals("dezoom")) {
-                        Timer.schedule(new Timer.Task() {
-                            int counter = 0; // Contatore per tracciare il numero di secondi trascorsi
-
-                            @Override
-                            public void run() {
-                                if (counter < 400) { // Se sono trascorsi meno di 10 secondi
-                                    gameScreen.setCameraWidth(gameScreen.cameraWidth + 1);
-                                    gameScreen.setCameraHeight(gameScreen.cameraHeight + 1);
-                                    counter++; // Incrementa il contatore
-                                } else {
-                                    this.cancel(); // Annulla il task se sono trascorsi 10 secondi
-                                }
-                            }
-                        }, 0, 0.001f);
-                    } else if (object.getName().equals("darkness")) {
-                        pixmap.setColor(new Color(0, 0, 0, 100f)); // Aumenta l'opacità
-                        pixmap.fill();
-                        darkness.dispose();
-                        darkness = new Texture(pixmap); // Create a new texture from the pixmap
-
-                        darkness.draw(pixmap,0, 0);
-
-
-                    } else if (object.getName().equals("lightness")) {
-                        pixmap.setColor(new Color(0, 0, 0, 0.5f)); // Riduce l'opacità
-                        pixmap.fill();
-                        darkness.draw(pixmap, 0, 0);
-                    }
-
-
-
+    private void rightjump() {
+        if (isOnGround()) {
+            //start a 0.5s timer, then return false
+            aniIndex = 0;
+            state = "rightJump";
+            aniTick++;
+            if (aniTick >= 10) {
+                aniTick = 0;
+                aniIndex++;
+                if (aniIndex >= 10) {
+                    aniIndex = 0;
                 }
             }
-        }
 
+            groundContacts = 0;
+            jumpCount = 1;
+            float force = body.getMass()*8;
+            body.setLinearVelocity(body.getLinearVelocity().x, 0);
+            body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
+            jumpCount++;
 
-
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            Vector2 playerPosition = new Vector2(body.getPosition().x, body.getPosition().y);
-            MapObjects objects = tiledMap.getLayers().get("Objects").getObjects(); // Access objects from the "Objects" layer
-
-            // Create a copy of objects for the second loop
-            MapObjects objectsCopy = new MapObjects();
-            for (MapObject object : objects) {
-                objectsCopy.add(object);
-            }
-
-            for (MapObject object : objects) {
-                if (object instanceof RectangleMapObject) {
-                    Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                    String objectName = object.getName();
-                    if (rect.contains(playerPosition.x * PPM, body.getPosition().y * PPM)) {
-                        // Check if the current object is named "pipe_1A" or "pipe_1B"
-                        if (objectName.endsWith("A")) {
-                            teleportToDestination(objectsCopy, objectName.replace("A", "B"));
-                        } else if (objectName.endsWith("B")) {
-                            teleportToDestination(objectsCopy, objectName.replace("B", "A"));
-                        }
-                    }
-                }
-            }
+            // Reset the jump timer
+            jumpTimer = 0;
         }
     }
 
-    public void fixGround() {
-        groundContacts = 1;
-    }
-
-    private void setPosition(Vector2 vector2) {
-        body.setTransform(vector2, body.getAngle());
-    }
-
-    private void teleportToDestination(MapObjects objects, String destinationName) {
 
 
-        System.out.println("Body: " + body.getUserData());
 
-
-        for (MapObject destinationObject : objects) {
-            if (destinationName.equals(destinationObject.getName())) {
-                if (destinationObject instanceof RectangleMapObject) {
-                    Rectangle destinationRect = ((RectangleMapObject) destinationObject).getRectangle();
-                    Vector2 destination = new Vector2(destinationRect.x + destinationRect.width / 2, destinationRect.y + destinationRect.height / 2);
-                    System.out.println("Body: " + body);
-                    body.setTransform(destination.scl(1 / PPM), body.getAngle()); // Ensure to keep the player's current angle
-                    return; // Exit after teleporting
-                }
-            }
-        }
-    }
 
     public void dispose() {
         texture.dispose();
@@ -527,15 +366,4 @@ public class Player extends GameEntity {
     }
 
 
-    public Vector2 getPlayerPosition() {
-        return new Vector2(body.getPosition().x, body.getPosition().y);
-    }
-
-    public int getPlayerWidth() {
-        return (int) width;
-    }
-
-    public int getPlayerHeight() {
-        return (int) height;
-    }
 }

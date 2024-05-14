@@ -110,42 +110,32 @@ public class PlayerContactListener implements ContactListener {
         Fixture fixtureB = contact.getFixtureB();
 
         if (fixtureA.getUserData() != null && fixtureB.getUserData() != null) {
+            String userDataA = fixtureA.getUserData().toString();
+            String userDataB = fixtureB.getUserData().toString();
 
-            System.out.println("Fixture A: " + fixtureA.getUserData() + "\nFixture B: " + fixtureB.getUserData() + "\n\n");
-            boolean isBox = fixtureB.getUserData().toString().equals("box") || fixtureA.getUserData().toString().equalsIgnoreCase("box");
+            System.out.println("Fixture A: " + userDataA + "\nFixture B: " + userDataB + "\n\n");
 
-            if(fixtureA.getUserData().equals("verticalWall") || fixtureB.getUserData().equals("verticalWall")) {
-                if(fixtureA.getUserData().equals("player") || fixtureB.getUserData().equals("player")) {
+            boolean isPlayerA = userDataA.equals("player");
+            boolean isPlayerB = userDataB.equals("player");
+
+            if (isPlayerA || isPlayerB) {
+                if (userDataA.equals("verticalWall") || userDataB.equals("verticalWall")) {
                     player.leaveGround();
                 }
-            }
 
-            if(player.isOnGround()){
-                System.out.println("onGround");
-                if(((fixtureA.getUserData().toString().equals("player") && (fixtureB.getUserData().toString().equals("normal") || fixtureB.getUserData().toString().toLowerCase().contains("oneway") ))) || (fixtureB.getUserData().toString().equals("player") && (fixtureA.getUserData().toString().equals("normal") || fixtureA.getUserData().toString().toLowerCase().contains("oneway")) )){
+                if (player.isOnGround() && ((isPlayerA && (userDataB.equals("normal") || userDataB.toLowerCase().contains("oneway"))) || (isPlayerB && (userDataA.equals("normal") || userDataA.toLowerCase().contains("oneway"))))) {
                     player.hitGround();
                 }
-            }
 
-            if (fixtureA.getUserData().toString().equals("player") || fixtureB.getUserData().toString().equals("player")) {
-                if(fixtureA.getUserData().toString().equals("player")) {
-                    System.out.println(Math.floor(fixtureA.getBody().getPosition().y));
-                } else {
-                    System.out.println(Math.floor(fixtureB.getBody().getPosition().y));
+                System.out.println(Math.floor((isPlayerA ? fixtureA : fixtureB).getBody().getPosition().y));
 
+                if (!userDataA.equalsIgnoreCase("verticalWall") && !userDataB.equalsIgnoreCase("verticalWall")) {
+                    player.hitGround();
                 }
-            }
 
-            boolean isNotVert = !fixtureB.getUserData().toString().equals("verticalWall") && !fixtureA.getUserData().toString().equalsIgnoreCase("verticalWall");
-            if ((isNotVert) && (fixtureA.getUserData().toString().equals("player") || fixtureB.getUserData().toString().equals("player"))) {
-                player.hitGround();
-
-            }
-
-            // Check for player beginning contact with a moving platform
-            if (fixtureA.getUserData().toString().contains("moving") || fixtureB.getUserData().toString().contains("moving")) {
-                // Store a reference to the platform's Body
-                platform = fixtureA.getUserData().toString().contains("moving") ? fixtureA.getBody() : fixtureB.getBody();
+                if (userDataA.contains("moving") || userDataB.contains("moving")) {
+                    platform = userDataA.contains("moving") ? fixtureA.getBody() : fixtureB.getBody();
+                }
             }
         }
     }
@@ -215,12 +205,5 @@ public class PlayerContactListener implements ContactListener {
         // Implement any additional logic that needs to occur after the collision response
     }
 
-    private boolean isOneWayPlatformCollision(Fixture a, Fixture b) {
-        boolean aIsOneWay = a.getUserData() != null && a.getUserData().equals("oneWay");
-        boolean bIsOneWay = b.getUserData() != null && b.getUserData().equals("oneWay");
-        boolean aIsPlayer = a.getUserData() != null && a.getUserData().equals("player");
-        boolean bIsPlayer = b.getUserData() != null && b.getUserData().equals("player");
 
-        return (aIsOneWay && bIsPlayer) || (bIsOneWay && aIsPlayer);
-    }
 }
