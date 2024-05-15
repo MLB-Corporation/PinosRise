@@ -33,7 +33,7 @@ Tutto d’un tratto risente i rumori di poco prima e, come per magia, si risvegl
 
 `Save Sound:` minecraft xp sound
 
-`Game Music:` Clock Town, First Day - The Legend of Zelda: Majora's Mask
+`Game Music:` [Clock Town - Children of Termina by Rozen](https://www.youtube.com/watch?v=RIbWnc5q1WQ)
 ## Authors
 
 - [@MarveeDev](https://www.github.com/MarveeDev)
