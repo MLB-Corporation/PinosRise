@@ -2,10 +2,13 @@ package com.mbl.pinoscastle.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -69,6 +72,7 @@ public class PauseMenuScreen implements Screen {
     }
     @Override
     public void show() {
+        Gdx.input.setCursorCatched(false);
 
         resume.addListener(new ChangeListener() {
             @Override
@@ -102,6 +106,8 @@ public class PauseMenuScreen implements Screen {
 
             }
         });
+
+
 
     }
 

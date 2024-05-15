@@ -278,6 +278,13 @@ BitmapFont font = new BitmapFont(); //or use alex answer to use custom font
 
 
     }
+    @Override
+    public void show() {
+        Gdx.input.setCursorCatched(true);
+        Gdx.input.setInputProcessor(null);
+
+        // Il resto del tuo codice...
+    }
 
     public void showMessage(String message) {
         // mostra un messaggio a schermo

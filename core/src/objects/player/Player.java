@@ -39,10 +39,8 @@ import static utils.Constants.PPM;
 import static utils.Constants.jumpSound;
 
 public class Player extends GameEntity {
-
+    // Sistema di contatto con il terreno
     private static int groundContacts = 1;
-
-    // Other methods...
 
     public void hitGround() {
         if (groundContacts == 0) {
@@ -57,68 +55,51 @@ public class Player extends GameEntity {
     }
 
 
-
     public boolean isOnGround() {
         return this.groundContacts > 0;
     }
 
-    private BufferedImage[] run;
 
+
+    // Attributi relativi al gioco
     private GameScreen gameScreen;
+    private TiledMap tiledMap;
 
-    private TileMapHelper tileMapHelper;
+    // Attributi relativi al player
+    private String state;
 
+    // Attributi relativi all'animazione
     private Texture texture;
+    private Sprite sprite;
+    private AnimationLoader animationLoader;
+    private int aniTick, aniIndex, aniSpeed = 5;
 
-    private Rectangle rect;
+    // Attributi relativi al movimento
+    private float speed = 2.5f;
+    private float jumpCooldown = 0;
+    private float jumpTimer = 0; // Add this line at the beginning of your class
 
-    private World world;
-
+    // Attributi relativi alla fisica
     private PlayerContactListener contactListener;
 
-    private int jumpCount;
-    private Sprite sprite;
-    private TiledMap tiledMap; // Reference to the TiledMap
-
-    private float jumpCooldown = 0; // Add this line at the beginning of your class
-
-    Pixmap pixmap;
-    Texture darkness;
-    private int aniTick, aniIndex, aniSpeed = 5;
-    private float fallTimer = 0;
-    //ANIMATIONS
-    private AnimationLoader animationLoader;
-
-    private String state;
+    // Impostazioni
     private Preferences preferencesData = Gdx.app.getPreferences("preferences");
+
 
 
     public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen, RectangleMapObject mapObject, World world) {
         super(width, height, body);
-
-        this.tileMapHelper = new TileMapHelper(gameScreen);
         this.speed = 2.5f;
-        this.jumpCount = 0;
-        this.rect = mapObject.getRectangle();
-        this.tiledMap = tiledMap; // Initialize the TiledMap
+        this.tiledMap = tiledMap;
         this.gameScreen = gameScreen;
-
         this.texture = new Texture(Gdx.files.internal("player/player.png"));
         this.sprite = new Sprite(texture);
         this.sprite.setSize(width / PPM, height / PPM);
         this.sprite.setOrigin(width / (2 * PPM), height / (2 * PPM));
         this.contactListener =  new PlayerContactListener(this, world, gameScreen);
-        this.world = world;
-        this.pixmap = new Pixmap(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Pixmap.Format.RGBA8888);
-        darkness = new Texture(pixmap);
-
-
         this.animationLoader = new AnimationLoader();
         jumpSound.setVolume(preferencesData.getFloat(PREF_SOUND_VOL)/10);
-
-
         state = "idle";
-
     }
 
 
@@ -129,19 +110,10 @@ public class Player extends GameEntity {
     public void update() {
         x = body.getPosition().x * PPM;
         y = body.getPosition().y * PPM;
-        if (!isOnGround()) {
-            fallTimer += Gdx.graphics.getDeltaTime();
-            if (fallTimer > 0.1) {
-                state = "fall";
-            }
-        } else {
-            fallTimer = 0;
-        }
         checkUserInput();
         sprite.setPosition(x - sprite.getWidth() / 2, y - sprite.getHeight() / 2);
         checkClimbable();
-
-    }
+}
 
 
 
@@ -167,12 +139,7 @@ public class Player extends GameEntity {
     @Override
     public void render(SpriteBatch batch) {
 
-        float widthInPixels = rect.width;
-        float heightInPixels = rect.height;
         Sprite sprite = new Sprite(texture);
-        //sprite.setPosition(body.getPosition().x*PPM-widthInPixels/2, body.getPosition().y*PPM-heightInPixels/2);
-        //sprite.draw(batch);
-        batch.draw(darkness, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Sprite[] animation = animationLoader.getAnimation(state);
         animation[aniIndex].setPosition(body.getPosition().x * PPM - sprite.getWidth() / 2, body.getPosition().y * PPM - sprite.getHeight() / 2);
         animation[aniIndex].draw(batch);
@@ -180,7 +147,6 @@ public class Player extends GameEntity {
     }
 
 
-    private float jumpTimer = 0; // Add this line at the beginning of your class
 
     private void checkUserInput() {
 
@@ -262,11 +228,9 @@ public class Player extends GameEntity {
                         }
 
                         groundContacts = 0;
-                        jumpCount = 1;
                         float force = body.getMass() * 8;
                         body.setLinearVelocity(body.getLinearVelocity().x, 0);
                         body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
-                        jumpCount++;
 
                         // Reset the jump timer
                         jumpTimer = 0;
@@ -355,38 +319,26 @@ public class Player extends GameEntity {
                 }
             }
         }
-        //if linear velocity is 0 and player is on the ground, reset jump count
-        if(body.getLinearVelocity().y == 0){
-            jumpCount = 0;
-        }
 
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y < 7 ? body.getLinearVelocity().y : 7);
     }
 
+    // funzione right jump (salto verso destra)
     private void rightjump() {
         if (isOnGround()) {
-            //play jump sound
 
             jumpSound.play();
-
-            //start a 0.5s timer, then return false
             aniIndex = 0;
             state = "rightJump";
             aniTick++;
             if (aniTick >= 10) {
                 aniTick = 0;
-                aniIndex++;
-                if (aniIndex >= 10) {
-                    aniIndex = 0;
-                }
             }
 
             groundContacts = 0;
-            jumpCount = 1;
             float force = body.getMass()*8;
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
             body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
-            jumpCount++;
 
             // Reset the jump timer
             jumpTimer = 0;
@@ -397,12 +349,6 @@ public class Player extends GameEntity {
 
 
 
-    public void dispose() {
-        texture.dispose();
-        darkness.dispose();
-        pixmap.dispose();
-
-    }
 
 
 }
