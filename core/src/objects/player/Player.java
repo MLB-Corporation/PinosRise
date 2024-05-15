@@ -2,6 +2,7 @@ package objects.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -87,6 +88,7 @@ public class Player extends GameEntity {
 
     private String state;
 
+    Music jumpSound = Gdx.audio.newMusic(Gdx.files.internal("data/sounds/jump.mp3"));
 
 
     public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen, RectangleMapObject mapObject, World world) {
@@ -227,13 +229,14 @@ public class Player extends GameEntity {
                     return;
                 } else {
                     if(isOnGround()) {
+                        jumpSound.play();
                         aniIndex = 0;
                         state = "leftJump";
                         aniTick++;
                         if (aniTick >= 10) {
                             aniTick = 0;
                             aniIndex++;
-                            if (aniIndex >= 10) {
+                            if (aniIndex >= 1) {
                                 aniIndex = 0;
                             }
                         }
@@ -330,6 +333,10 @@ public class Player extends GameEntity {
 
     private void rightjump() {
         if (isOnGround()) {
+            //play jump sound
+
+            jumpSound.play();
+
             //start a 0.5s timer, then return false
             aniIndex = 0;
             state = "rightJump";
