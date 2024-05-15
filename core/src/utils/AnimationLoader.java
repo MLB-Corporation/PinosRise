@@ -61,12 +61,13 @@ public class AnimationLoader {
             rightJumpSprites[i] = new Sprite(bufferedImageToTexture(rightJumpAnimation[i]));
         }
 
-        /*
+
         fallAnimation = loadAnimation("fall");
         fallSprites = new Sprite[fallAnimation.length];
         for (int i = 0; i < fallAnimation.length; i++) {
             fallSprites[i] = new Sprite(bufferedImageToTexture(fallAnimation[i]));
         }
+
         rightAnimation = loadAnimation("right");
         rightSprites = new Sprite[rightAnimation.length];
         for (int i = 0; i < rightAnimation.length; i++) {
@@ -77,6 +78,7 @@ public class AnimationLoader {
         for (int i = 0; i < leftAnimation.length; i++) {
             leftSprites[i] = new Sprite(bufferedImageToTexture(leftAnimation[i]));
         }
+        /*
         climbAnimation = loadAnimation("climb");
         climbSprites = new Sprite[climbAnimation.length];
         for (int i = 0; i < climbAnimation.length; i++) {
@@ -118,6 +120,21 @@ public class AnimationLoader {
                 for(int i = 0; i < 10; i++)
                     rightJumpAnimation[i] = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_RIGHT_JUMP).getSubimage(0, 0, 12, 17);
                 return rightJumpAnimation;
+            case "fall":
+                fallAnimation = new BufferedImage[2];
+                for(int i = 0; i < 2; i++)
+                    fallAnimation[i] = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_FALL).getSubimage(i*12, 0, 12, 17);
+                return fallAnimation;
+            case "right":
+                rightAnimation = new BufferedImage[2];
+                for(int i = 0; i < 2; i++)
+                    rightAnimation[i] = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_RIGHT).getSubimage(i*12, 0, 12, 17);
+                return rightAnimation;
+            case "left":
+                leftAnimation = new BufferedImage[2];
+                for(int i = 0; i < 2; i++)
+                    leftAnimation[i] = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_LEFT).getSubimage(i*12, 0, 12, 17);
+                return leftAnimation;
 
         }
         return null;

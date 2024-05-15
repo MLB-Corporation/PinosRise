@@ -5,13 +5,18 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mbl.pinoscastle.GameClass;
+
+import static utils.Constants.jumpSound;
+import static utils.Constants.menuMusic;
 
 public class PreferencesScreen implements Screen {
 
@@ -19,15 +24,23 @@ public class PreferencesScreen implements Screen {
     private Slider musicVolumeSlider;
     private Slider soundVolumeSlider;
     private Slider gameMusicVolume;
-    private static final String PREF_MUSIC_VOLUME = "volume";
-    private static final String PREF_MUSIC_ENABLED = "music.enabled";
-    private static final String PREF_SOUND_ENABLED = "sound.enabled";
-    private static final String PREF_SOUND_VOL = "sound";
-    private static final String PREFS_NAME = "preferences";
+    private Button backButton;
+    private CheckBox musicEnabled;
+    private CheckBox soundEnabled;
+    public static final String PREF_MENU_MUSIC_VOLUME = "volume";
+    public static final String PREF_MUSIC_ENABLED = "music.enabled";
+    public static final String PREF_SOUND_ENABLED = "sound.enabled";
+    public static final String PREF_SOUND_VOL = "sound";
+    public static final String PREFS_NAME = "preferences";
+    public static final String PREF_GAME_MUSIC_VOLUME = "gameMusic";
+
     Stage stage;
     Skin skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
-    utils.Preferences preferencesData = new utils.Preferences();
+    Preferences preferences = Gdx.app.getPreferences(PREFS_NAME);
     public PreferencesScreen(GameClass parent) {
+        Preferences prefs = Gdx.app.getPreferences(PREFS_NAME);
+
+
         stage = new Stage(new FitViewport(1920, 1080));
         Gdx.input.setInputProcessor(stage);
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
@@ -36,15 +49,17 @@ public class PreferencesScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
 
+        backButton = new TextButton("BACK", skin, "bold");
         // Crea gli slider
         musicVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
         soundVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
         gameMusicVolume = new Slider(0f, 1f, 0.1f, false, skin);
 
+
         // Imposta i valori iniziali degli slider
-        musicVolumeSlider.setValue(preferencesData.gameMusicVolume);
-        soundVolumeSlider.setValue(preferencesData.SFXVolume);
-        gameMusicVolume.setValue(preferencesData.gameMusicVolume);
+        musicVolumeSlider.setValue(prefs.getFloat(PREF_MENU_MUSIC_VOLUME, 0.5f));
+        soundVolumeSlider.setValue(prefs.getFloat(PREF_SOUND_VOL, 0.5f));
+        gameMusicVolume.setValue(prefs.getFloat(PREF_GAME_MUSIC_VOLUME, 0.5f));
 
         // Aggiungi gli slider alla tabella
         table.add(new Label("Menu Music Volume", skin));
@@ -55,6 +70,10 @@ public class PreferencesScreen implements Screen {
         table.row();
         table.add(new Label("Sound Volume", skin));
         table.add(soundVolumeSlider);
+        table.row().pad(10, 0, 10, 0);
+        //add space
+        table.add(backButton).colspan(2);
+
         Texture backgroundTexture = new Texture(Gdx.files.internal("skin/menu_background.png"));
         // Create image with background texture
         Image backgroundImage = new Image(backgroundTexture); // Set alpha to 0.5 for 50% transparency
@@ -71,8 +90,15 @@ public class PreferencesScreen implements Screen {
     }
     @Override
     public void show() {
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                parent.changeScreen(parent.getPreviousScreen());
 
-    }
+            }
+        });
+    };
+
 
     @Override
     public void render(float v) {
@@ -81,53 +107,18 @@ public class PreferencesScreen implements Screen {
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
         if (musicVolumeSlider.isDragging()) {
-            preferencesData.gameMusicVolume =  musicVolumeSlider.getValue();
-            parent.getMenuScreen().menuMusic.setVolume(preferencesData.gameMusicVolume);
+            preferences.putFloat(PREF_MENU_MUSIC_VOLUME, musicVolumeSlider.getValue());
+            menuMusic.setVolume(musicVolumeSlider.getValue()/50);
         }
         if (soundVolumeSlider.isDragging()) {
-            setSoundVolume(soundVolumeSlider.getValue());
+            preferences.putFloat(PREF_SOUND_VOL, soundVolumeSlider.getValue());
+            jumpSound.setVolume(soundVolumeSlider.getValue()/10);
+            jumpSound.play();
+
         }
     }
 
-    protected Preferences getPrefs() {
-        return Gdx.app.getPreferences(PREFS_NAME);
-    }
 
-    public boolean isSoundEffectsEnabled() {
-        return getPrefs().getBoolean(PREF_SOUND_ENABLED, true);
-    }
-
-    public void setSoundEffectsEnabled(boolean soundEffectsEnabled) {
-        getPrefs().putBoolean(PREF_SOUND_ENABLED, soundEffectsEnabled);
-        getPrefs().flush();
-    }
-
-    public boolean isMusicEnabled() {
-        return getPrefs().getBoolean(PREF_MUSIC_ENABLED, true);
-    }
-
-    public void setMusicEnabled(boolean musicEnabled) {
-        getPrefs().putBoolean(PREF_MUSIC_ENABLED, musicEnabled);
-        getPrefs().flush();
-    }
-
-    public float getMusicVolume() {
-        return getPrefs().getFloat(PREF_MUSIC_VOLUME, 0.5f);
-    }
-
-    public void setMusicVolume(float volume) {
-        getPrefs().putFloat(PREF_MUSIC_VOLUME, volume);
-        getPrefs().flush();
-    }
-
-    public float getSoundVolume() {
-        return getPrefs().getFloat(PREF_SOUND_VOL, 0.5f);
-    }
-
-    public void setSoundVolume(float volume) {
-        getPrefs().putFloat(PREF_SOUND_VOL, volume);
-        getPrefs().flush();
-    }
 
 
     @Override
@@ -147,7 +138,11 @@ public class PreferencesScreen implements Screen {
 
     @Override
     public void hide() {
-
+        Preferences prefs = Gdx.app.getPreferences(PREFS_NAME);
+        prefs.putFloat(PREF_MENU_MUSIC_VOLUME, musicVolumeSlider.getValue());
+        prefs.putFloat(PREF_SOUND_VOL, soundVolumeSlider.getValue());
+        prefs.putFloat(PREF_GAME_MUSIC_VOLUME, gameMusicVolume.getValue());
+        prefs.flush(); // This writes the preferences to disk
     }
 
     @Override

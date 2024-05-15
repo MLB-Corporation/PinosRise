@@ -2,6 +2,7 @@ package objects.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -33,7 +34,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import static com.mbl.pinoscastle.screens.PreferencesScreen.PREF_SOUND_VOL;
 import static utils.Constants.PPM;
+import static utils.Constants.jumpSound;
 
 public class Player extends GameEntity {
 
@@ -82,13 +85,12 @@ public class Player extends GameEntity {
     Pixmap pixmap;
     Texture darkness;
     private int aniTick, aniIndex, aniSpeed = 5;
-
+    private float fallTimer = 0;
     //ANIMATIONS
     private AnimationLoader animationLoader;
 
     private String state;
-
-    Music jumpSound = Gdx.audio.newMusic(Gdx.files.internal("data/sounds/jump.mp3"));
+    private Preferences preferencesData = Gdx.app.getPreferences("preferences");
 
 
     public Player(float width, float height, Body body, TiledMap tiledMap, GameScreen gameScreen, RectangleMapObject mapObject, World world) {
@@ -112,7 +114,7 @@ public class Player extends GameEntity {
 
 
         this.animationLoader = new AnimationLoader();
-
+        jumpSound.setVolume(preferencesData.getFloat(PREF_SOUND_VOL)/10);
 
 
         state = "idle";
@@ -127,7 +129,14 @@ public class Player extends GameEntity {
     public void update() {
         x = body.getPosition().x * PPM;
         y = body.getPosition().y * PPM;
-
+        if (!isOnGround()) {
+            fallTimer += Gdx.graphics.getDeltaTime();
+            if (fallTimer > 0.1) {
+                state = "fall";
+            }
+        } else {
+            fallTimer = 0;
+        }
         checkUserInput();
         sprite.setPosition(x - sprite.getWidth() / 2, y - sprite.getHeight() / 2);
         checkClimbable();
@@ -181,6 +190,9 @@ public class Player extends GameEntity {
 
         if(!Gdx.input.isKeyPressed(Input.Keys.RIGHT) && !Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)){
             state = "idle";
+            if(aniIndex >= 10){
+                aniIndex = 0;
+            }
             aniTick++;
             if (aniTick >= 10) {
                 aniTick = 0;
@@ -220,6 +232,18 @@ public class Player extends GameEntity {
             }
 
             else {
+                state = "right";
+                if (aniIndex >= 2) {
+                    aniIndex = 0;
+                }
+                aniTick++;
+                if (aniTick >= 10) {
+                    aniTick = 0;
+                    aniIndex++;
+                    if (aniIndex >= 2) {
+                        aniIndex = 0;
+                    }
+                }
                 velX = 1;
             }
         }
@@ -235,10 +259,6 @@ public class Player extends GameEntity {
                         aniTick++;
                         if (aniTick >= 10) {
                             aniTick = 0;
-                            aniIndex++;
-                            if (aniIndex >= 1) {
-                                aniIndex = 0;
-                            }
                         }
 
                         groundContacts = 0;
@@ -268,9 +288,21 @@ public class Player extends GameEntity {
                         aniIndex = 0;
                     }
                 }
-            } else
+            } else {
+                state = "left";
+                if (aniIndex >= 2) {
+                    aniIndex = 0;
+                }
+                aniTick++;
+                if (aniTick >= 10) {
+                    aniTick = 0;
+                    aniIndex++;
+                    if (aniIndex >= 2) {
+                        aniIndex = 0;
+                    }
+                }
                 velX = -1;
-        }
+            }}
 
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y);
 

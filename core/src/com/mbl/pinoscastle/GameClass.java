@@ -2,6 +2,7 @@ package com.mbl.pinoscastle;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -24,24 +25,31 @@ public class GameClass extends Game {
     public static GameClass INSTANCE;
     private int widthScreen, heightScreen;
     private OrthographicCamera camera;
+    public Screen currentScreen;
+    public Screen previousScreen;
 
     public void changeScreen(int screen){
+        previousScreen = this.getScreen();
         switch(screen){
             case MENU:
                 menuScreen = new MenuScreen(this); // added (this)
                 this.setScreen(menuScreen);
+                currentScreen = menuScreen;
                 break;
             case PREFERENCES:
-                if(preferencesScreen == null) preferencesScreen = new PreferencesScreen(this); // added (this)
+                preferencesScreen = new PreferencesScreen(this); // added (this)
                 this.setScreen(preferencesScreen);
+                currentScreen = preferencesScreen;
                 break;
             case APPLICATION:
                 if(gameScreen == null) gameScreen = new GameScreen(camera, this, frameBuffer); //added (this)
                 this.setScreen(gameScreen);
+                currentScreen = gameScreen;
                 break;
             case PAUSE:
                 pauseMenuScreen = new PauseMenuScreen(this); //added (this)
                 this.setScreen(pauseMenuScreen);
+                currentScreen = pauseMenuScreen;
                 break;
         }
     }
@@ -50,6 +58,12 @@ public class GameClass extends Game {
         INSTANCE = this;
         this.widthScreen = widthScreen;
         this.heightScreen = heightScreen;
+    }
+
+    public void goBack() {
+        if (previousScreen != null) {
+            setScreen(previousScreen);
+        }
     }
 
     public GameScreen getGameScreen() {
@@ -77,5 +91,9 @@ public class GameClass extends Game {
 
     public MenuScreen getMenuScreen() {
         return menuScreen;
+    }
+
+    public int getPreviousScreen() {
+        return previousScreen == menuScreen ? MENU : previousScreen == preferencesScreen ? PREFERENCES : previousScreen == gameScreen ? APPLICATION : PAUSE;
     }
 }

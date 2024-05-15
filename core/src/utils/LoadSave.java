@@ -20,6 +20,9 @@ public class LoadSave{
     public static final String PLAYER_IDLE = "player/idle.png";
     public static final String PLAYER_LEFT_JUMP = "player/left_jump.png";
     public static final String PLAYER_RIGHT_JUMP = "player/right_jump.png";
+    public static final String PLAYER_FALL = "player/player_fall.png";
+    public static final String PLAYER_RIGHT = "player/walk_right.png";
+    public static final String PLAYER_LEFT = "player/walk_left.png";
 
 
 

@@ -80,6 +80,7 @@ public class PauseMenuScreen implements Screen {
         exit.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+
                 parent.changeScreen(GameClass.MENU);
             }
         });

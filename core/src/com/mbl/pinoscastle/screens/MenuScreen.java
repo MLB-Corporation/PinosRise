@@ -2,6 +2,7 @@ package com.mbl.pinoscastle.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
@@ -17,7 +18,8 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mbl.pinoscastle.GameClass;
-import utils.Preferences;
+
+import static utils.Constants.menuMusic;
 
 public class MenuScreen implements Screen {
 
@@ -26,10 +28,9 @@ public class MenuScreen implements Screen {
     private boolean isPlaying;
     private Table table;
     private float originalWidth, originalHeight;
-    Preferences preferencesData = new Preferences();
+    Preferences preferencesData = Gdx.app.getPreferences("preferences");
 
     TextButton exit, newGame, preferences, loadGame;
-    Music menuMusic;
     public MenuScreen(GameClass parent) {
         this.parent = parent;
         stage = new Stage(new FitViewport(1920, 1080));
@@ -78,14 +79,20 @@ public class MenuScreen implements Screen {
             table.add(exit).fillX().uniformX();
         }
 
-        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("data/sounds/menu_music.mp3"));
-        menuMusic.setLooping(true);
-        menuMusic.play();
+
+
+        if (!menuMusic.isPlaying()) {
+            menuMusic.setLooping(true);
+            System.out.println("Playing music");
+            menuMusic.play();
+        }
+
 
 
     }
     @Override
     public void show() {
+
         exit.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -124,7 +131,7 @@ public class MenuScreen implements Screen {
     @Override
     public void render(float delta) {
 
-        menuMusic.setVolume((float) preferencesData.menuMusicVolume / 100);
+        menuMusic.setVolume((float) preferencesData.getFloat("volume") / 50);
 
         Gdx.gl.glClearColor(0f, 0f, 0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
