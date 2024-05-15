@@ -26,8 +26,11 @@ Tutto d’un tratto risente i rumori di poco prima e, come per magia, si risvegl
 
 #SFX
 `Jump Sound: ` boing
+
 `Menu Music: `  "Going Wacky"
+
 `Save Sound: ` minecraft xp sound
+
 `Game Music: ` Clock Town, First Day - The Legend of Zelda: Majora's Mask
 ## Authors
 
