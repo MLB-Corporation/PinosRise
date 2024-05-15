@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import com.mbl.pinoscastle.screens.GameScreen;
+import com.mbl.pinosrise.screens.GameScreen;
 import objects.obstacles.MovableBox;
 import objects.obstacles.MovingPlatform;
 import objects.player.Player;
@@ -31,8 +31,8 @@ public class TileMapHelper {
         this.gameScreen = gameScreen;
     }
 
+    // setup della mappa
     public OrthogonalTiledMapRenderer setupMap(String mappa) {
-       // Load the new map
         map = new TmxMapLoader().load(mappa);
         parseMapObjects(map.getLayers().get("Objects").getObjects());
         parseTileCollisions();
@@ -40,13 +40,8 @@ public class TileMapHelper {
         return new OrthogonalTiledMapRenderer(map);
     }
 
-    public void resetMap(Map map) {
-        gameScreen.getWorld().getBodies(bodies);
-        for (Body body : bodies) {
-            gameScreen.getWorld().destroyBody(body);
-        }
-    }
 
+    // parsing degli oggetti della mappa
     private void parseMapObjects(MapObjects objects){
         for(MapObject mapObject : objects) {
             if(mapObject instanceof PolygonMapObject) {
@@ -58,13 +53,17 @@ public class TileMapHelper {
 
                 String rectangleName = mapObject.getName();
 
+                // se l'oggetto ha la proprietà "moving" allora è una piattaforma mobile
                 if(mapObject.getProperties().containsKey("moving")) {
                     gameScreen.addMovingPlatform(new MovingPlatform(gameScreen.getWorld(), (RectangleMapObject) mapObject, mapObject.getProperties().get("time").toString()));
                 }
 
+                // se l'oggetto ha la proprietà "box" allora è una scatola mobile
                 if(mapObject.getName().equals("box")) {
                     gameScreen.addBox(new MovableBox(gameScreen.getWorld(), (RectangleMapObject) mapObject, mapObject.getProperties().get("type").toString()));
                 }
+
+                // se l'oggetto ha la proprietà "player" allora è il player
                 if(rectangleName.equals("player")) {
                     PolygonShape shape = new PolygonShape();
                     shape.setAsBox(rectangle.getWidth()/2/PPM, rectangle.getHeight()/2/PPM);
@@ -77,7 +76,8 @@ public class TileMapHelper {
                             gameScreen.getWorld()
                     );
                     body.createFixture(shape, 1000).setUserData("player");
-                    
+
+                    // rimuove il player precedente e ne crea uno nuovo in caso di cambio mappa / bug (seconda mappa non implementata)
                     gameScreen.removePlayer();
                     gameScreen.setPlayer(new Player(rectangle.getWidth(), rectangle.getHeight(), body, map, gameScreen, (RectangleMapObject) mapObject, gameScreen.getWorld()));
                 }
@@ -85,24 +85,28 @@ public class TileMapHelper {
         }
     }
 
+
+    // funzione per generare automaticamente i corpi statici per le collisioni con i tile (hitbox)
     private void parseTileCollisions() {
         for (MapLayer layer : map.getLayers()) {
             if (layer instanceof TiledMapTileLayer) {
+                // se il layer ha la proprietà "collides" allora è un layer di collisione
                 if (layer.getProperties().containsKey("collides")) {
                     TiledMapTileLayer tileLayer = (TiledMapTileLayer) layer;
 
+                    // definizione del tipo di layer
                     boolean isOneWayLayer = layer.getName().equalsIgnoreCase("OneWay");
                     boolean isSlideLayer = layer.getName().equalsIgnoreCase("slide");
                     boolean isVerticalWall = layer.getProperties().containsKey("vertical");
 
-                    // Handle horizontal chains
+                    // catene di tile orizzontali
                     if(!isVerticalWall) {
                         for (int y = 0; y < tileLayer.getHeight(); y++) {
                             handleTileChains(tileLayer, y, true, isOneWayLayer, isSlideLayer, isVerticalWall);
                         }
                     }
 
-                    // Handle vertical chains if the layer has the "vertical" property
+                    // catece di tile verticali
                     if (isVerticalWall) {
                         for (int x = 0; x < tileLayer.getWidth(); x++) {
                             handleTileChains(tileLayer, x, false, isOneWayLayer, isSlideLayer, isVerticalWall);
@@ -113,14 +117,17 @@ public class TileMapHelper {
         }
     }
 
+    // funzione per gestire le catene di tile
     private void handleTileChains(TiledMapTileLayer tileLayer, int position, boolean isHorizontal, boolean isOneWay, boolean isSlide, boolean isVerticalWall) {
         int counter = 0;
-        int start = -1; // Initialize start position outside valid range
+        int start = -1; // inizzializzazione della posizione di inizio
+        // ciclo per scorrere i tile
         for (int i = 0; i <= (isHorizontal ? tileLayer.getWidth() : tileLayer.getHeight()); i++) {
+
             TiledMapTileLayer.Cell cell = i < (isHorizontal ? tileLayer.getWidth() : tileLayer.getHeight()) ? (isHorizontal ? tileLayer.getCell(i, position) : tileLayer.getCell(position, i)) : null;
             if (cell != null && cell.getTile() != null) {
                 if (start == -1) {
-                    start = i; // Set start position at the beginning of a new tile chain
+                    start = i; // Imposta la posizione di inizio della catena
                 }
                 counter++;
             } else if (counter > 0) {
@@ -129,16 +136,17 @@ public class TileMapHelper {
 
                 createStaticBodyForTile(startPosition, position, length, (isHorizontal ? tileLayer.getTileHeight() : tileLayer.getTileWidth()), isHorizontal, isOneWay, isSlide, isVerticalWall);
                 counter = 0;
-                start = -1; // Reset start position for the next chain
+                start = -1; // Resetta la posizione di inizio
             }
         }
     }
 
+    // funzione per creare i corpi statici per i tile
     private void createStaticBodyForTile(float startPosition, float orthogonalPosition, float length, float thickness, boolean isHorizontal, boolean isOneWay, boolean isSlide, boolean isVerticalWall) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
 
-        // Calculate position based on orientation
+        // Calcola la posizione del corpo
         float posX, posY;
         if (isHorizontal) {
             posX = (startPosition + length / 2) / PPM;
@@ -150,21 +158,21 @@ public class TileMapHelper {
         bodyDef.position.set(posX, posY);
 
         PolygonShape shape = new PolygonShape();
-        // Set shape based on orientation
+        // Imposta la forma del corpo in base all'orientamento
         if (isHorizontal) {
             shape.setAsBox(length / 2 / PPM, thickness / 2 / PPM);
         } else {
             shape.setAsBox(thickness / 2 / PPM, length / 2 / PPM);
         }
 
-        // Create the body and set the userData
+        // Creazione del corpo e della fixture, necessaria per la collisione e per la gestione delle proprietà
         Body body = gameScreen.getWorld().createBody(bodyDef);
         Fixture fixture = body.createFixture(shape, 0);
         if(isVerticalWall) {
             fixture.setUserData("verticalWall");
         }
         if (isOneWay) {
-            fixture.setUserData("oneWay"); // Mark this fixture for special collision handling.
+            fixture.setUserData("oneWay");
         }
         if (isSlide) {
             fixture.setUserData("slide");
@@ -173,13 +181,14 @@ public class TileMapHelper {
             fixture.setUserData("normal");
         }
 
-        // Add the body to the array
+        // Aggiunta del corpo all'array per la rimozione in caso di cambio mappa (seconda mappa non implementata)
         bodies.add(body);
 
         shape.dispose();
     }
 
 
+    // funzione per creare il player
     private void createStaticBody(PolygonMapObject polygonMapObject){
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
@@ -189,6 +198,7 @@ public class TileMapHelper {
         shape.dispose();
     }
 
+    // funzione per creare la forma del corpo
     private Shape createPolygonShape(PolygonMapObject polygonMapObject) {
         //array di vertici
         float[] vertices = polygonMapObject.getPolygon().getTransformedVertices();

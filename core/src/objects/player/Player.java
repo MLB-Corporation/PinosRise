@@ -3,13 +3,7 @@ package objects.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.Map;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -23,18 +17,11 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.mbl.pinoscastle.screens.GameScreen;
+import com.mbl.pinosrise.screens.GameScreen;
 import com.badlogic.gdx.utils.Timer;
 import utils.*;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import static com.mbl.pinoscastle.screens.PreferencesScreen.PREF_SOUND_VOL;
+import static com.mbl.pinosrise.screens.PreferencesScreen.PREF_SOUND_VOL;
 import static utils.Constants.PPM;
 import static utils.Constants.jumpSound;
 
@@ -113,13 +100,13 @@ public class Player extends GameEntity {
         checkUserInput();
         sprite.setPosition(x - sprite.getWidth() / 2, y - sprite.getHeight() / 2);
         checkClimbable();
-}
+    }
 
 
-
+    // metodo per controllare se il player è in grado di salire su una scala
     private void checkClimbable() {
         Vector2 playerPosition = new Vector2(body.getPosition().x, body.getPosition().y);
-        MapObjects objects = tiledMap.getLayers().get("Objects").getObjects(); // Access objects from the "Objects" layer
+        MapObjects objects = tiledMap.getLayers().get("Objects").getObjects();
 
         for (MapObject object : objects) {
             if (object instanceof RectangleMapObject) {
@@ -138,7 +125,6 @@ public class Player extends GameEntity {
 
     @Override
     public void render(SpriteBatch batch) {
-
         Sprite sprite = new Sprite(texture);
         Sprite[] animation = animationLoader.getAnimation(state);
         animation[aniIndex].setPosition(body.getPosition().x * PPM - sprite.getWidth() / 2, body.getPosition().y * PPM - sprite.getHeight() / 2);
@@ -147,13 +133,12 @@ public class Player extends GameEntity {
     }
 
 
-
+    // controlli di input e relative animazioni
     private void checkUserInput() {
-
         if (jumpCooldown > 0) {
             jumpCooldown -= Gdx.graphics.getDeltaTime();
         }
-
+        // stato di idle
         if(!Gdx.input.isKeyPressed(Input.Keys.RIGHT) && !Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)){
             state = "idle";
             if(aniIndex >= 10){
@@ -169,7 +154,7 @@ public class Player extends GameEntity {
             }
         }
 
-
+        // tutto ciò che riguarda il movimento del player verso destra, con animazioni
         velX = 0;
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
             //salto in movimento verso destra
@@ -198,6 +183,7 @@ public class Player extends GameEntity {
             }
 
             else {
+                // camminata verso destra
                 state = "right";
                 if (aniIndex >= 2) {
                     aniIndex = 0;
@@ -213,12 +199,15 @@ public class Player extends GameEntity {
                 velX = 1;
             }
         }
+
+        // tutto ciò che riguarda il movimento del player verso sinistra, con animazioni
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             if(Gdx.input.isKeyPressed(Input.Keys.SPACE) ){
                 if(contactListener.isTouchingVerticalWall() && !contactListener.checkContact() ) {
                     return;
                 } else {
                     if(isOnGround()) {
+                        // salto verso sinistra
                         jumpSound.play();
                         aniIndex = 0;
                         state = "leftJump";
@@ -237,7 +226,7 @@ public class Player extends GameEntity {
                     }
                 }
             }
-
+            // corsa verso sinistra
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
                 state = "runLeft";
                 velX = (float) -1.5;
@@ -253,6 +242,7 @@ public class Player extends GameEntity {
                     }
                 }
             } else {
+                // camminata verso sinistra
                 state = "left";
                 if (aniIndex >= 2) {
                     aniIndex = 0;
@@ -280,17 +270,14 @@ public class Player extends GameEntity {
             } else {
                 rightjump();
             }
-
-
-
         }
 
-
+        // Se si è su una one way platform e si preme S, disabilita il sensore per un breve periodo in modo da poter passare attraverso
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 
             Vector2 playerPosition = body.getPosition();
 
-            // Get the fixtures under the player
+
             Array<Fixture> fixtures = new Array<>();
             gameScreen.getWorld().QueryAABB(new QueryCallback() {
                 @Override
@@ -300,21 +287,20 @@ public class Player extends GameEntity {
                 }
             }, playerPosition.x, playerPosition.y - 1, playerPosition.x, playerPosition.y);
 
-            // Check if any of the fixtures are "oneWay" tiles
+            // Controllo se il player è su una piattaforma one way
             for (Fixture fixture : fixtures) {
                 if (fixture.getUserData() != null && fixture.getUserData().toString().contains("oneWay")) {
-                    // Disable the tile's hitbox
+                    // Disabilita il sensore
                     fixture.setSensor(true);
 
-                    // Use a Timer to re-enable the hitbox after a delay
+                    // Lo riabilita dopo 0.5 secondi
                     Timer.schedule(new Timer.Task() {
                         @Override
                         public void run() {
                             fixture.setSensor(false);
                         }
-                    }, 0.5f);  // Delay in seconds
+                    }, 0.5f);
 
-                    // Exit the loop after finding a "oneWay" tile
                     break;
                 }
             }
@@ -323,7 +309,7 @@ public class Player extends GameEntity {
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y < 7 ? body.getLinearVelocity().y : 7);
     }
 
-    // funzione right jump (salto verso destra)
+    // funzione right jump (salto verso destra) - Era ripetuta
     private void rightjump() {
         if (isOnGround()) {
 

@@ -36,7 +36,7 @@ public class MovableBox {
         shape.dispose();
 
 
-        // Set the user data to "box" so we can identify it in the collision listener
+
     }
 
     public void render(SpriteBatch batch) {

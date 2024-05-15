@@ -70,15 +70,4 @@ public class MovingPlatform {
 
 
     }
-
-
-    public void dispose() {
-        texture.dispose();
-    }
-
-
-
-    public Body getBody() {
-        return body;
-    }
 }

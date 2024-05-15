@@ -33,6 +33,7 @@ public class AnimationLoader {
     private Sprite[] climbSprites;
 
     public AnimationLoader() {
+        // carica le animazioni e le trasforma in sprite
         runRightAnimation = loadAnimation("runRight");
         idleAnimation = loadAnimation("idle");
         runRightSprites = new Sprite[runRightAnimation.length];
@@ -78,12 +79,7 @@ public class AnimationLoader {
         for (int i = 0; i < leftAnimation.length; i++) {
             leftSprites[i] = new Sprite(bufferedImageToTexture(leftAnimation[i]));
         }
-        /*
-        climbAnimation = loadAnimation("climb");
-        climbSprites = new Sprite[climbAnimation.length];
-        for (int i = 0; i < climbAnimation.length; i++) {
-            climbSprites[i] = new Sprite(bufferedImageToTexture(climbAnimation[i]));
-        }*/
+
     }
 
     BufferedImage sprite;
@@ -91,6 +87,7 @@ public class AnimationLoader {
     public BufferedImage[] loadAnimation(String anim) {
 
         switch (anim) {
+            // carica le immagini delle animazioni e le restituisce in un array
             case "runRight":
                 runRightAnimation = new BufferedImage[Constants.PLAYER_RUN_LENGHT];
                 for (int i = 0; i < runRightAnimation.length; i++) {
@@ -167,7 +164,7 @@ public class AnimationLoader {
 
     }
 
-
+    // converte un BufferedImage in un Texture
     private Texture bufferedImageToTexture(BufferedImage image) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

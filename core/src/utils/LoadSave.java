@@ -26,7 +26,7 @@ public class LoadSave{
 
 
 
-
+    // carica un'immagine da un file
     public static BufferedImage GetSpriteAtlas(String fileName){
         BufferedImage img = null;
         InputStream is = Gdx.files.internal(fileName).read();

@@ -14,6 +14,7 @@ public class Constants {
 
     public static Music menuMusic = Gdx.audio.newMusic(Gdx.files.internal("data/sounds/menu_music.mp3"));
     public static Music jumpSound = Gdx.audio.newMusic(Gdx.files.internal("data/sounds/jump.mp3"));
-
+    public static Music gameMusic = Gdx.audio.newMusic(Gdx.files.internal("data/sounds/game_music.mp3"));
+    public static Music saveSound = Gdx.audio.newMusic(Gdx.files.internal("data/sounds/save.mp3"));
 }
 
