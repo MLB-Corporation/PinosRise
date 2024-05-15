@@ -1,6 +1,6 @@
 # PINO'S RISE
 
-Pino's castle / Pino's rise game
+Pino's rise game - TPS School Project 23/24
 
 ## Development Videos
 
