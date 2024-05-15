@@ -34,22 +34,22 @@ public class GameClass extends Game {
         previousScreen = this.getScreen();
         switch(screen){
             case MENU:
-                menuScreen = new MenuScreen(this); // added (this)
+                menuScreen = new MenuScreen(this);
                 this.setScreen(menuScreen);
                 currentScreen = menuScreen;
                 break;
             case PREFERENCES:
-                preferencesScreen = new PreferencesScreen(this); // added (this)
+                preferencesScreen = new PreferencesScreen(this);
                 this.setScreen(preferencesScreen);
                 currentScreen = preferencesScreen;
                 break;
             case APPLICATION:
-                if(gameScreen == null || newGame) gameScreen = new GameScreen(camera, this, frameBuffer); //added (this)
+                if(gameScreen == null || newGame) gameScreen = new GameScreen(camera, this, frameBuffer);
                 this.setScreen(gameScreen);
                 currentScreen = gameScreen;
                 break;
             case PAUSE:
-                pauseMenuScreen = new PauseMenuScreen(this); //added (this)
+                pauseMenuScreen = new PauseMenuScreen(this);
                 this.setScreen(pauseMenuScreen);
                 currentScreen = pauseMenuScreen;
                 break;
