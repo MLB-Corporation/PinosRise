@@ -76,6 +76,7 @@ public class PauseMenuScreen implements Screen {
         resume.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                parent.setNewGame(false);
                 parent.changeScreen(GameClass.APPLICATION);
             }
         });
