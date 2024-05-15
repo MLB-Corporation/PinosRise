@@ -24,6 +24,11 @@ Proprio nel momento in cui cerca la carne da cucinare nel minifrigo, inizia a se
 Una volta constatato che non ci fosse nessun essere vivente nei paraggi e che probabilmente era uno scherzo della vecchiaia o della sigaretta speciale fumata durante il viaggio, torna a cucinare, dato che il tempo della schimicazza stava arrivando.
 Tutto d’un tratto risente i rumori di poco prima e, come per magia, si risveglia dentro uno scantinato con un gran mal di testa chiedendosi cosa fosse successo e pensando alla gran fame.
 
+#SFX
+`Jump Sound: ` boing
+`Menu Music: `  "Going Wacky"
+`Save Sound: ` minecraft xp sound
+`Game Music: ` Clock Town, First Day - The Legend of Zelda: Majora's Mask
 ## Authors
 
 - [@MarveeDev](https://www.github.com/MarveeDev)
