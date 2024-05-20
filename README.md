@@ -22,7 +22,7 @@ Inizia il weekend, Pino decide come da routine di partire per una nuova avventur
 Dopo lunghe ore di viaggio, scende la luce e Pino è costretto a trovare un posto dove insediarsi per la notte.
 Trova quindi un bel posticino dove posteggiare il camper e si prepara per la camminata che gli aspetterà il giorno dopo, nel mentre si rilassa cucinando la cena.
 Proprio nel momento in cui cerca nel minifrigo la carne da cucinare, inizia a sentire dei rumori provenire da fuori. Esce quindi a controllare pensando fosse solo un animale affamato in cerca di qualcosa da addentare.
-Una volta constatato che non ci fosse nessun essere vivente nei paraggi e che probabilmente era uno scherzo della vecchiaia o della sigaretta speciale fumata durante il viaggio, torna a cucinare, dato che il tempo della schimicazza stava arrivando.
+Una volta constatato che non ci fosse nessun essere vivente nei paraggi e che probabilmente era uno scherzo della vecchiaia, torna a cucinare.
 Tutto d’un tratto risente i rumori di poco prima e, come per magia, si risveglia dentro uno scantinato con un gran mal di testa chiedendosi cosa sia successo e pensando alla gran fame.
 
 ## SFX
